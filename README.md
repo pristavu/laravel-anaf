@@ -346,7 +346,7 @@ test('my test', function () {
     ]);
     
     // act
-    $efactura = Anaf::efactura(accessToken:  'TEST_TOKEN');
+    $efactura = Anaf::efactura(accessToken: 'TEST_TOKEN');
     $messages = $efactura->withMockClient($mockClient)->messages(cif: 123456, days: 60);
     
     // assert
