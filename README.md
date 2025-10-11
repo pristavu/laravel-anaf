@@ -254,12 +254,12 @@ $xml = Storage::disk('private')->get('invoices/12345/987654321.xml');
 // optionally you can pass the full path to xml
 $xml = Storage::disk('private')->path('invoices/12345/987654321.xml');
 
-$validationResult = $connector->validateInvoice(
+$response = $connector->validateInvoice(
     xml: $xml,
     standard: \Pristavu\Anaf\Enums\DocumentStandard::FCN, // optional, default is FACT1  
 );
 
-if($validationResult['is_valid']){
+if($response['is_valid']){
    // upload the invoice
 }
 
