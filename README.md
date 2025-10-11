@@ -34,10 +34,10 @@ php artisan vendor:publish --tag="anaf-config"
 - OAuth2 - authentication/authorization.
 - Efactura - client/connector.
   - Retrieve messages/invoices (regular and paginated)
-  - Download messages/invoices as zip
-  - Validate messages/invoices
-  - Upload messages/invoices as xml
-  - Convert messages/invoices to PDF
+  - Download invoices as zip
+  - Validate xml invoices
+  - Upload xml invoices
+  - Convert xml invoices to PDF
   - Check message status
 
 ---
