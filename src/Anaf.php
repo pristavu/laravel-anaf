@@ -26,6 +26,9 @@ final class Anaf
         return new OAuthConnector($clientId, $clientSecret, $redirectUri);
     }
 
+    /**
+     * Create an Efactura connector to interact with the Efactura API.
+     */
     public function efactura(string $accessToken): EfacturaConnector
     {
         return new EfacturaConnector($accessToken);
