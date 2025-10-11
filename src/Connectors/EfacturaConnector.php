@@ -21,8 +21,8 @@ final class EfacturaConnector extends Connector
     public function __construct(
         private readonly string $accessToken,
     ) {
-        $this->testMode = config('efactura.test_mode', false);
-        $this->timeoutInSeconds = config('efactura.timeout', 15);
+        $this->testMode = config('anaf.efactura.test_mode', false);
+        $this->timeoutInSeconds = config('anaf.efactura.timeout', 15);
     }
 
     public function inTestMode(): self

@@ -11,7 +11,7 @@ return [
     ],
     // eFactura settings
     'efactura' => [
-        'test_mode' => env('ANAF_EFACTURA_TEST_MODE', true),
+        'test_mode' => env('ANAF_EFACTURA_TEST_MODE', false),
         'timeout' => env('ANAF_EFACTURA_TIMEOUT', 15), // in seconds
     ],
 
