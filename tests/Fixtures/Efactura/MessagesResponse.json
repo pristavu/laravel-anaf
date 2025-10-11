@@ -1,0 +1,21 @@
+{
+    "statusCode": 200,
+    "headers": {
+        "Server": "nginx/1.25.1",
+        "Date": "Sun, 05 Oct 2025 13:54:43 GMT",
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Content-Type-Options": "nosniff",
+        "X-Xss-Protection": "1; mode=block",
+        "x-correlation-id": "adcd4e66fa25022490c001004de19a89",
+        "X-Backend-Latency": "0.204",
+        "X-Total-Request-Response-Latency": "0.204",
+        "X-Backend-Connection-Time": "0.004",
+        "Cache-Control": "public, must-revalidate, proxy-revalidate",
+        "X-Client-Original-IP": "10.254.252.174"
+    },
+    "data": "{}"
+}

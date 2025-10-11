@@ -1,0 +1,102 @@
+{
+    "name": "pristavu/laravel-anaf",
+    "description": "Laravel package for interacting with ANAF web services",
+    "keywords": [
+        "Andrei Pristavu",
+        "laravel",
+        "laravel-anaf",
+        "anaf-php",
+        "ANAF Romania",
+        "efactura"
+    ],
+    "homepage": "https://github.com/pristavu/laravel-anaf",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrei Pristavu",
+            "email": "andrew@andrew.ro",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.3|^8.4",
+        "illuminate/contracts": "^11.0||^12.0",
+        "saloonphp/saloon": "^3.14",
+        "spatie/laravel-package-tools": "^1.92.7",
+        "ext-simplexml": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.25.1",
+        "nunomaduro/collision": "^8.8.2",
+        "larastan/larastan": "^3.7.2",
+        "orchestra/testbench": "^10.0.0||^9.0.0",
+        "pestphp/pest": "^4.1.1",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0.2",
+        "phpstan/extension-installer": "^1.4.3",
+        "phpstan/phpstan-deprecation-rules": "^2.0.3",
+        "phpstan/phpstan-phpunit": "^2.0.7",
+        "rector/rector": "^2.2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pristavu\\Anaf\\": "src/",
+            "Pristavu\\Anaf\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pristavu\\Anaf\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
+    "scripts": {
+        "update:requirements": [
+            "composer bump"
+        ],
+        "lint": [
+            "rector",
+            "pint --parallel"
+        ],
+        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:lint": [
+            "rector --dry-run",
+            "pint --parallel --test"
+        ],
+        "test:unit": "pest --parallel --coverage --min=100",
+        "test:types": [
+            "phpstan"
+        ],
+        "test": [
+            "@test:lint",
+            "@test:types",
+            "@test:type-coverage",
+            "@test:unit"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Pristavu\\Anaf\\AnafServiceProvider"
+            ],
+            "aliases": {
+                "Anaf": "Pristavu\\Anaf\\Facades\\Anaf"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
