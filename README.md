@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/pristavu/laravel-anaf.svg?style=flat-square)](https://packagist.org/packages/pristavu/laravel-anaf)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/pristavu/laravel-anaf/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/pristavu/laravel-anaf/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/pristavu/laravel-anaf/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/pristavu/laravel-anaf/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/pristavu/laravel-anaf/pint.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/pristavu/laravel-anaf/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/pristavu/laravel-anaf.svg?style=flat-square)](https://packagist.org/packages/pristavu/laravel-anaf)
 
 This package makes it easy to work with ANAF services in Laravel applications.
