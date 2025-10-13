@@ -30,7 +30,6 @@ trait SupportEfactura
      * @param  int|null  $days  The number of days to look back for messages. Defaults to 60 days if null.
      * @param  MessageType|null  $type  Optional filter for message type.
      *
-     * @return array|object
      * @throws FatalRequestException
      * @throws RequestException
      *
@@ -51,7 +50,6 @@ trait SupportEfactura
      * @param  int|null  $page  The page number for pagination. Defaults to 1 if null.
      * @param  MessageType|null  $type  Optional filter for message type. Defaults to null if not provided.
      *
-     * @return array|object
      * @throws FatalRequestException
      * @throws RequestException
      *
@@ -69,7 +67,6 @@ trait SupportEfactura
      *
      * @param  int  $downloadId  The ID of the e-invoice message to download.
      *
-     * @return array|object
      * @throws FatalRequestException
      * @throws RequestException
      *
@@ -89,7 +86,6 @@ trait SupportEfactura
      * @param  string  $xml  The XML content or path of the e-invoice to validate.
      * @param  DocumentStandard|null  $standard  The document standard to validate against.
      *
-     * @return array|object
      * @throws FatalRequestException
      * @throws RequestException
      *
@@ -107,7 +103,6 @@ trait SupportEfactura
      *
      * @param  int  $uploadId  The ID of the e-invoice message to check the status for.
      *
-     * @return array|object
      * @throws FatalRequestException
      * @throws RequestException
      *
@@ -130,7 +125,6 @@ trait SupportEfactura
      * @param  bool|null  $isSelfInvoice  Indicates if the invoice is a self-invoice. Defaults to false.
      * @param  bool|null  $isLegalEnforcement  Indicates if the invoice is related to legal enforcement. Defaults to false.
      *
-     * @return array|object
      * @throws FatalRequestException
      * @throws RequestException
      *
@@ -151,7 +145,6 @@ trait SupportEfactura
      * @param  DocumentStandard|null  $standard  The document standard to convert against.
      * @param  bool|null  $withoutValidation  If true, skips validation before conversion
      *
-     * @return array|object
      * @throws FatalRequestException
      * @throws RequestException
      *

@@ -14,10 +14,9 @@ final class Anaf
     /**
      * Create an OAuth token to be used with Anaf API.
      *
-     * @param string|null $clientId The OAuth2 client ID. If null, it will be fetched from the configuration.
-     * @param string|null $clientSecret The OAuth2 client secret. If null, it will be fetched from the configuration.
-     * @param string|null $redirectUri The OAuth2 redirect URI. If null, it will be fetched from the configuration.
-     * @return OAuthConnector
+     * @param  string|null  $clientId  The OAuth2 client ID. If null, it will be fetched from the configuration.
+     * @param  string|null  $clientSecret  The OAuth2 client secret. If null, it will be fetched from the configuration.
+     * @param  string|null  $redirectUri  The OAuth2 redirect URI. If null, it will be fetched from the configuration.
      *
      * @throws InvalidArgumentException If any of the required parameters are missing.
      *
@@ -39,8 +38,7 @@ final class Anaf
     /**
      * Create an Efactura connector to interact with the Efactura API.
      *
-     * @param string $accessToken The OAuth2 access token.
-     * @return EfacturaConnector
+     * @param  string  $accessToken  The OAuth2 access token.
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/prezentare%20api%20efactura.pdf
      */
@@ -52,8 +50,7 @@ final class Anaf
     /**
      * Create a Company connector to interact with the Company API.
      *
-     * @param int $cif The Fiscal Identification Code of the company.
-     * @return CompanyConnector
+     * @param  int  $cif  The Fiscal Identification Code of the company.
      *
      * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/Servicii_web/doc_WS_V9.txt
      */

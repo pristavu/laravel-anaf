@@ -55,8 +55,6 @@ final class UploadInvoiceRequest extends Request implements HasBody
     }
 
     /**
-     * @param  Response  $response
-     * @return array
      * @throws AnafException
      */
     public function createDtoFromResponse(Response $response): array
