@@ -69,7 +69,7 @@ it('handle anaf error', function (): void {
     ]);
 
     $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
-    $response = $connector->messages(1234567890, 1);
+    $response = $connector->messages(cif: 29930516, days: 1);
 
     expect($response)
         ->toBeArray()
@@ -94,6 +94,6 @@ it('throws exception on bad request', function (): void {
     ]);
 
     $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
-    $connector->messages(1234567890, 1);
+    $connector->messages(cif: 29930516, days: 1);
 
 })->throws(Pristavu\Anaf\Exceptions\AnafException::class, 'Parametrii zile si cif sunt obligatorii', 400);

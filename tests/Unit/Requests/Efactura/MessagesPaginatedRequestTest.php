@@ -81,7 +81,7 @@ it('handle anaf error', function (): void {
 
     $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
     $period = Carbon\CarbonPeriod::create(now()->subDays(2), now());
-    $response = $connector->messagesPaginated(1234567890, $period);
+    $response = $connector->messagesPaginated(cif: 29930516, period: $period);
 
     expect($response)
         ->toBeArray()
@@ -107,6 +107,6 @@ it('throws exception on bad request', function (): void {
 
     $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
     $period = Carbon\CarbonPeriod::create(now()->subDays(2), now());
-    $response = $connector->messagesPaginated(1234567890, $period);
+    $response = $connector->messagesPaginated(cif: 29930516, period: $period);
 
 })->throws(Pristavu\Anaf\Exceptions\AnafException::class, 'Parametrii zile si cif sunt obligatorii', 400);

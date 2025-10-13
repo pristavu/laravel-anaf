@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Pristavu\Anaf\Connectors\CompanyConnector;
 use Pristavu\Anaf\Connectors\EfacturaConnector;
 use Pristavu\Anaf\Connectors\OAuthConnector;
+use Pristavu\Anaf\Support\Validate;
 
 final class Anaf
 {
@@ -56,6 +57,10 @@ final class Anaf
      */
     public function company(int $cif): CompanyConnector
     {
+        if (! Validate::cif($cif)) {
+            throw new InvalidArgumentException('The provided CIF is not valid.');
+        }
+
         return new CompanyConnector($cif);
     }
 }

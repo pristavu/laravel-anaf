@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pristavu\Anaf\Concerns;
 
 use Carbon\CarbonPeriod;
+use InvalidArgumentException;
 use Pristavu\Anaf\Enums\DocumentStandard;
 use Pristavu\Anaf\Enums\MessageType;
 use Pristavu\Anaf\Enums\XmlStandard;
@@ -15,6 +16,7 @@ use Pristavu\Anaf\Requests\Efactura\MessagesRequest;
 use Pristavu\Anaf\Requests\Efactura\MessageStatusRequest;
 use Pristavu\Anaf\Requests\Efactura\UploadInvoiceRequest;
 use Pristavu\Anaf\Requests\Efactura\ValidateInvoiceRequest;
+use Pristavu\Anaf\Support\Validate;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
@@ -32,11 +34,16 @@ trait SupportEfactura
      *
      * @throws FatalRequestException
      * @throws RequestException
+     * @throws InvalidArgumentException
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/listamesaje.html
      */
     public function messages(int $cif, ?int $days = 60, ?MessageType $type = null): array|object
     {
+        if (! Validate::cif($cif)) {
+            throw new InvalidArgumentException('The provided CIF is not valid.');
+        }
+
         $request = new MessagesRequest(cif: $cif, days: $days, type: $type);
 
         return $this->send($request)->dtoOrFail();
@@ -57,6 +64,10 @@ trait SupportEfactura
      */
     public function messagesPaginated(int $cif, CarbonPeriod $period, ?int $page = 1, ?MessageType $type = null): array|object
     {
+        if (! Validate::cif($cif)) {
+            throw new InvalidArgumentException('The provided CIF is not valid.');
+        }
+
         $request = new MessagesPaginatedRequest($cif, $period, $page, $type);
 
         return $this->send($request)->dtoOrFail();
@@ -132,6 +143,10 @@ trait SupportEfactura
      */
     public function uploadInvoice(int $cif, string $xml, ?XmlStandard $standard = XmlStandard::UBL, ?bool $isExternal = false, ?bool $isSelfInvoice = false, ?bool $isLegalEnforcement = false): array|object
     {
+        if (! Validate::cif($cif)) {
+            throw new InvalidArgumentException('The provided CIF is not valid.');
+        }
+
         $request = new UploadInvoiceRequest(cif: $cif, xml: $xml, standard: $standard, isExternal: $isExternal, isSelfInvoice: $isSelfInvoice, isLegalEnforcement: $isLegalEnforcement);
 
         return $this->send($request)->dtoOrFail();
