@@ -19,7 +19,7 @@ it('uploads an xml invoice', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->uploadInvoice(cif: 29930516, xml: 'XML', standard: Pristavu\Anaf\Enums\XmlStandard::UBL, isExternal: false, isSelfInvoice: false, isLegalEnforcement: false);
 
     expect($response)->toBeArray()
@@ -41,13 +41,19 @@ it('handle anaf generic error', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->uploadInvoice(cif: 29930516, xml: 'XML', standard: Pristavu\Anaf\Enums\XmlStandard::UBL, isExternal: true, isSelfInvoice: true, isLegalEnforcement: false);
 
     expect($response)->toBeArray()
         ->and($response['success'])->toBeFalse()
         ->and($response['error'])->toBe('Generic error');
 });
+
+it('throws exception on invalid cif', function (): void {
+    $connector = Anaf::eInvoice('accessToken');
+
+    $connector->uploadInvoice(cif: 1234567, xml: 'XML');
+})->throws(InvalidArgumentException::class, $message = 'The provided CIF is invalid.');
 
 it('throws exception on invalid xml', function (): void {
 
@@ -61,7 +67,7 @@ it('throws exception on invalid xml', function (): void {
 
     $xml = __DIR__.'/../../../Fixtures/Efactura/file.xml';
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $connector->uploadInvoice(cif: 29930516, xml: $xml, standard: Pristavu\Anaf\Enums\XmlStandard::UBL, isExternal: false, isSelfInvoice: false, isLegalEnforcement: false);
 
 })->throws(AnafException::class, 'Invalid XML response', 0);
@@ -81,7 +87,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $connector->uploadInvoice(cif: 29930516, xml: 'XML', standard: Pristavu\Anaf\Enums\XmlStandard::UBL, isExternal: false, isSelfInvoice: false, isLegalEnforcement: false);
 
 })->throws(AnafException::class, 'Trebuie sa aveti atasat in request un fisier de tip xml', 400);

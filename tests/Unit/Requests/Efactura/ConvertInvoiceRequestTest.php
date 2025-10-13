@@ -25,7 +25,7 @@ it('converts xml invoice to pdf', function (): void {
 </Invoice>
 XML;
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->setTimeout(20)->convertInvoice(xml: $xml, standard: DocumentStandard::FACT1, withoutValidation: true);
 
     expect($response)->toBeArray()
@@ -52,7 +52,7 @@ it('handle anaf error', function (): void {
 
     $xml = __DIR__.'/../../../Fixtures/Efactura/file.xml';
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->convertInvoice(xml: $xml, standard: DocumentStandard::FCN, withoutValidation: true);
 
     expect($response)->toBeArray()
@@ -77,7 +77,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $connector->convertInvoice('1234567890');
 
 })->throws(Pristavu\Anaf\Exceptions\AnafException::class, 'Not Found', 404);

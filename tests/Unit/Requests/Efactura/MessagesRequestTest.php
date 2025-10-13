@@ -32,7 +32,7 @@ it('can retrieve efactura messages', function ($messageType, $messageLabel): voi
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->messages(8000000000, 1, $messageType);
 
     expect($response)
@@ -68,7 +68,7 @@ it('handle anaf error', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->messages(cif: 29930516, days: 1);
 
     expect($response)
@@ -77,6 +77,12 @@ it('handle anaf error', function (): void {
         ->and($response['error'])->toBe('Generic error message');
 
 });
+
+it('throws exception on invalid cif', function (): void {
+    $connector = Anaf::eInvoice('accessToken');
+
+    $connector->messages(cif: 12345, days: 1);
+})->throws(InvalidArgumentException::class, $message = 'The provided CIF is invalid.');
 
 it('throws exception on bad request', function (): void {
 
@@ -93,7 +99,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $connector->messages(cif: 29930516, days: 1);
 
 })->throws(Pristavu\Anaf\Exceptions\AnafException::class, 'Parametrii zile si cif sunt obligatorii', 400);

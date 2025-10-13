@@ -28,7 +28,7 @@ it('validate correct xml invoice', function (): void {
 </Invoice>
 XML;
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->validateInvoice($xml, DocumentStandard::FACT1);
 
     expect($response)->toBeArray()
@@ -56,7 +56,7 @@ it('handle anaf error', function (): void {
 
     $xml = __DIR__.'/../../../Fixtures/Efactura/file.xml';
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->validateInvoice($xml);
 
     expect($response)->toBeArray()
@@ -82,7 +82,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $connector->validateInvoice('1234567890');
 
 })->throws(Pristavu\Anaf\Exceptions\AnafException::class, 'Not Found', 404);

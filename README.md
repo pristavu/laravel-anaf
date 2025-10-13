@@ -31,14 +31,21 @@ php artisan vendor:publish --tag="anaf-config"
 # What you can do with this package
 
 ### For now the package provides two main features:
+
 - OAuth2 - authentication/authorization.
-- Efactura - client/connector.
-  - Retrieve messages/invoices (regular and paginated)
-  - Download invoices as zip
-  - Validate xml invoices
-  - Upload xml invoices
-  - Convert xml invoices to PDF
-  - Check message status
+    - get authorization url
+    - retrieve access token
+    - refresh access token 
+- eInvoice - client/connector (Oauth2 token required) for interacting with the eFactura API.
+    - retrieve messages/invoices (regular and paginated)
+    - download invoices as zip
+    - validate xml invoices
+    - upload xml invoices
+    - convert xml invoices to PDF
+    - check message status
+- taxPayer - client/connector for interacting with the taxpayer API.
+    - vat status check and other taxpayer information
+    - balance sheet retrieval
 
 ---
 
@@ -136,7 +143,6 @@ public function __invoke(Request $request): ?RedirectResponse
 }
 ```
 
-
 ### Refreshing existing access token
 
 ```php
@@ -169,16 +175,18 @@ if ($authenticator->hasExpired()) {
 
 ---
 
-# Efactura usage
+# Efactura usage (Oauth2 required)
 
 ### Initializing the client
 
 ```php
+// You need a valid access token to initialize the efactura connector
+
 // retrieve access token from database or other storage
 $accessToken = Pristavu\Anaf\Models\AccessToken::query()->where('user_id', auth()->id())->first()->access_token;
 
 // initialize the efactura connector / client
-$connector = Pristavu\Anaf\Facades\Anaf::efactura(accessToken: $accessToken);
+$connector = Pristavu\Anaf\Facades\Anaf::eInvoice(accessToken: $accessToken);
 ```
 
 ### Switching to test mode (sandbox)

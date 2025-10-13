@@ -18,7 +18,7 @@ it('can check a successful message status', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->messageStatus(1234);
 
     expect($response)->toBeArray()
@@ -37,7 +37,7 @@ it('can check a pending message status', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->messageStatus(1234);
 
     expect($response)->toBeArray()
@@ -58,7 +58,7 @@ it('shows error message', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $response = $connector->messageStatus(1234);
 
     expect($response)->toBeArray()
@@ -77,7 +77,7 @@ it('throws exception on invalid xml', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $connector->messageStatus(123456);
 
 })->throws(AnafException::class, 'Invalid XML response', 0);
@@ -97,7 +97,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
     $connector->messageStatus(123456);
 
 })->throws(AnafException::class, 'Parametrul id_incarcare este obligatoriu', 400);

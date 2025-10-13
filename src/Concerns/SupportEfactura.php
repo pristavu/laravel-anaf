@@ -28,7 +28,7 @@ trait SupportEfactura
     /**
      * Retrieve e-invoice messages for a specific Fiscal Identification Code within the last given number of days.
      *
-     * @param  int  $cif  The Fiscal Identification Code of the company.
+     * @param  int  $cif  The Fiscal Identification Code of the entity.
      * @param  int|null  $days  The number of days to look back for messages. Defaults to 60 days if null.
      * @param  MessageType|null  $type  Optional filter for message type.
      *
@@ -41,7 +41,7 @@ trait SupportEfactura
     public function messages(int $cif, ?int $days = 60, ?MessageType $type = null): array|object
     {
         if (! Validate::cif($cif)) {
-            throw new InvalidArgumentException('The provided CIF is not valid.');
+            throw new InvalidArgumentException('The provided CIF is invalid.');
         }
 
         $request = new MessagesRequest(cif: $cif, days: $days, type: $type);
@@ -52,7 +52,7 @@ trait SupportEfactura
     /**
      * Retrieve paginated e-invoice messages for a specific Fiscal Identification Code within a given time range.
      *
-     * @param  int  $cif  The Fiscal Identification Code of the company.
+     * @param  int  $cif  The Fiscal Identification Code of the entity.
      * @param  CarbonPeriod  $period  The time period to filter messages.
      * @param  int|null  $page  The page number for pagination. Defaults to 1 if null.
      * @param  MessageType|null  $type  Optional filter for message type. Defaults to null if not provided.
@@ -65,7 +65,7 @@ trait SupportEfactura
     public function messagesPaginated(int $cif, CarbonPeriod $period, ?int $page = 1, ?MessageType $type = null): array|object
     {
         if (! Validate::cif($cif)) {
-            throw new InvalidArgumentException('The provided CIF is not valid.');
+            throw new InvalidArgumentException('The provided CIF is invalid.');
         }
 
         $request = new MessagesPaginatedRequest($cif, $period, $page, $type);
@@ -129,10 +129,10 @@ trait SupportEfactura
     /**
      * Upload an e-invoice XML file or content to the ANAF system.
      *
-     * @param  int  $cif  The Fiscal Identification Code of the company.
+     * @param  int  $cif  The Fiscal Identification Code of the entity.
      * @param  string  $xml  The XML content or path of the e-invoice to upload.
      * @param  XmlStandard|null  $standard  The XML standard of the e-invoice. Defaults to UBL.
-     * @param  bool|null  $isExternal  Indicates if the invoice customer is external (not a romanian company). Defaults to false.
+     * @param  bool|null  $isExternal  Indicates if the invoice customer is external (not a romanian entity). Defaults to false.
      * @param  bool|null  $isSelfInvoice  Indicates if the invoice is a self-invoice. Defaults to false.
      * @param  bool|null  $isLegalEnforcement  Indicates if the invoice is related to legal enforcement. Defaults to false.
      *
@@ -144,7 +144,7 @@ trait SupportEfactura
     public function uploadInvoice(int $cif, string $xml, ?XmlStandard $standard = XmlStandard::UBL, ?bool $isExternal = false, ?bool $isSelfInvoice = false, ?bool $isLegalEnforcement = false): array|object
     {
         if (! Validate::cif($cif)) {
-            throw new InvalidArgumentException('The provided CIF is not valid.');
+            throw new InvalidArgumentException('The provided CIF is invalid.');
         }
 
         $request = new UploadInvoiceRequest(cif: $cif, xml: $xml, standard: $standard, isExternal: $isExternal, isSelfInvoice: $isSelfInvoice, isLegalEnforcement: $isLegalEnforcement);
