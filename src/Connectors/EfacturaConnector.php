@@ -25,6 +25,12 @@ final class EfacturaConnector extends Connector
         $this->timeoutInSeconds = config('anaf.efactura.timeout', 15);
     }
 
+    /**
+     * Enable test mode for the connector.
+     * This will switch the base URL to the test environment.
+     *
+     * @return $this
+     */
     public function inTestMode(): self
     {
         $this->testMode = true;
