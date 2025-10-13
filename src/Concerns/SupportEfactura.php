@@ -145,7 +145,7 @@ trait SupportEfactura
     }
 
     /**
-     * Validate an e-invoice XML file or content against the specified standard.
+     * Convert an e-invoice XML file or content to PDF.
      *
      * @param  string  $xml  The XML content or path of the e-invoice to convert.
      * @param  DocumentStandard|null  $standard  The document standard to convert against.
