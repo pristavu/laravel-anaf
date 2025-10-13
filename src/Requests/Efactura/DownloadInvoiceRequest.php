@@ -11,7 +11,9 @@ use Saloon\Http\Response;
 use Throwable;
 
 /**
- * https://mfinante.gov.ro/static/10/eFactura/descarcare.html
+ * Download an e-invoice by its download ID.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/descarcare.html
  */
 final class DownloadInvoiceRequest extends Request
 {

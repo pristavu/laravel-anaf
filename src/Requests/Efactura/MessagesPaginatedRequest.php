@@ -14,7 +14,9 @@ use Saloon\Http\Response;
 use Throwable;
 
 /**
- * https://mfinante.gov.ro/static/10/eFactura/listamesaje.html#/EFacturaListaMesaje/getPaginatie
+ * Retrieve paginated e-invoice messages for a specific Fiscal Identification Code within a given date range.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/listamesaje.html#/EFacturaListaMesaje/getPaginatie
  */
 final class MessagesPaginatedRequest extends Request
 {

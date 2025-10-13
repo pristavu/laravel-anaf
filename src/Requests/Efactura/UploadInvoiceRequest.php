@@ -16,7 +16,9 @@ use Saloon\Traits\Body\HasXmlBody;
 use Throwable;
 
 /**
- * https://mfinante.gov.ro/static/10/eFactura/upload.html
+ * Upload an e-invoice XML file or content to the ANAF system.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/upload.html
  */
 final class UploadInvoiceRequest extends Request implements HasBody
 {
@@ -52,6 +54,11 @@ final class UploadInvoiceRequest extends Request implements HasBody
         );
     }
 
+    /**
+     * @param  Response  $response
+     * @return array
+     * @throws AnafException
+     */
     public function createDtoFromResponse(Response $response): array
     {
 

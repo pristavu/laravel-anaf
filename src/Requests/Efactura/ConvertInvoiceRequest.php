@@ -14,7 +14,9 @@ use Saloon\Traits\Body\HasXmlBody;
 use Throwable;
 
 /**
- * https://mfinante.gov.ro/static/10/eFactura/upload.html
+ * Convert an e-invoice XML file or content to PDF.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/xmltopdf.html
  */
 final class ConvertInvoiceRequest extends Request implements HasBody
 {

@@ -14,8 +14,9 @@ use Saloon\Traits\RequestProperties\HasQuery;
 use Throwable;
 
 /**
- * Retrieve e-invoice messages for a specific CUI within the last given number of days.
- * https://mfinante.gov.ro/static/10/eFactura/listamesaje.html#/EFacturaListaMesaje/getListaMesaje
+ * Retrieve e-invoice messages for a specific Fiscal Identification Code within the last given number of days.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/listamesaje.html#/EFacturaListaMesaje/getListaMesaje
  */
 final class MessagesRequest extends Request
 {

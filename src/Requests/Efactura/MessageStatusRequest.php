@@ -14,7 +14,9 @@ use Saloon\Traits\RequestProperties\HasQuery;
 use Throwable;
 
 /**
- * https://mfinante.gov.ro/static/10/eFactura/staremesaj.html
+ * Check the status of a previously uploaded e-invoice using its upload ID.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/staremesaj.html
  */
 final class MessageStatusRequest extends Request
 {

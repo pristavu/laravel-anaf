@@ -14,7 +14,9 @@ use Saloon\Traits\Body\HasXmlBody;
 use Throwable;
 
 /**
- * https://mfinante.gov.ro/static/10/eFactura/upload.html
+ * Validate an e-invoice XML file or content against the specified standard.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/upload.html
  */
 final class ValidateInvoiceRequest extends Request implements HasBody
 {
