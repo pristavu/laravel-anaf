@@ -10,11 +10,11 @@ class Validate
      * Validate CIF (Fiscal Identification Code).
      *
      * @param  int|string  $cif  The CIF to validate.
-     * @return bool  True if the CIF is valid, false otherwise.
+     * @return bool True if the CIF is valid, false otherwise.
      */
     public static function cif(int|string $cif): bool
     {
-        $cif = (string) preg_replace('/\D/', '', $cif);
+        $cif = (string) preg_replace('/\D/', '', (string) $cif);
 
         if (mb_strlen($cif) < 2 || mb_strlen($cif) > 10 || ! ctype_digit($cif)) {
             return false;
