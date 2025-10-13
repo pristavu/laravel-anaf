@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'request_timeout' => env('ANAF_REQUEST_TIMEOUT', 15), // in seconds
     // OAuth2 settings
     'oauth' => [
         'client_id' => env('ANAF_CLIENT_ID'),
@@ -12,7 +13,6 @@ return [
     // eFactura settings
     'efactura' => [
         'test_mode' => env('ANAF_EFACTURA_TEST_MODE', false),
-        'timeout' => env('ANAF_EFACTURA_TIMEOUT', 15), // in seconds
     ],
 
 ];

@@ -22,7 +22,7 @@ final class EfacturaConnector extends Connector
         private readonly string $accessToken,
     ) {
         $this->testMode = config('anaf.efactura.test_mode', false);
-        $this->timeoutInSeconds = config('anaf.efactura.timeout', 15);
+        $this->timeoutInSeconds = config('anaf.request_timeout', 15);
     }
 
     /**
