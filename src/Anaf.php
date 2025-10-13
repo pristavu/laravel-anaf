@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Pristavu\Anaf;
 
 use InvalidArgumentException;
-use Pristavu\Anaf\Connectors\CompanyConnector;
 use Pristavu\Anaf\Connectors\EfacturaConnector;
 use Pristavu\Anaf\Connectors\OAuthConnector;
-use Pristavu\Anaf\Support\Validate;
+use Pristavu\Anaf\Connectors\TaxPayerConnector;
 
 final class Anaf
 {
@@ -43,24 +42,20 @@ final class Anaf
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/prezentare%20api%20efactura.pdf
      */
-    public function efactura(string $accessToken): EfacturaConnector
+    public function eInvoice(string $accessToken): EfacturaConnector
     {
         return new EfacturaConnector($accessToken);
     }
 
     /**
-     * Create a Company connector to interact with the Company API.
+     * Create a taxPayer connector to interact with the TaxPayer API.
      *
-     * @param  int  $cif  The Fiscal Identification Code of the company.
+     * @param  int  $cif  The Fiscal Identification Code of the entity.
      *
      * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/Servicii_web/doc_WS_V9.txt
      */
-    public function company(int $cif): CompanyConnector
+    public function taxPayer(int $cif): TaxPayerConnector
     {
-        if (! Validate::cif($cif)) {
-            throw new InvalidArgumentException('The provided CIF is not valid.');
-        }
-
-        return new CompanyConnector($cif);
+        return new TaxPayerConnector($cif);
     }
 }
