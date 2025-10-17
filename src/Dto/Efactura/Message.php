@@ -6,10 +6,14 @@ namespace Pristavu\Anaf\Dto\Efactura;
 
 use Illuminate\Support\Carbon;
 use Pristavu\Anaf\Enums\MessageType;
+use Saloon\Contracts\DataObjects\WithResponse;
 use Saloon\Http\Response;
+use Saloon\Traits\Responses\HasResponse;
 
-class Message
+class Message implements WithResponse
 {
+    use HasResponse;
+
     public function __construct(
         public int $cif,
         public int $upload_id,

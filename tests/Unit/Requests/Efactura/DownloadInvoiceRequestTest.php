@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Pristavu\Anaf\Exceptions\AnafException;
 use Pristavu\Anaf\Facades\Anaf;
 use Pristavu\Anaf\Requests\Efactura\DownloadInvoiceRequest;
+use Pristavu\Anaf\Responses\Efactura\DownloadInvoiceResponse;
+use Pristavu\Anaf\Responses\Efactura\ErrorResponse;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
@@ -14,16 +16,16 @@ it('can download an invoice', function (): void {
         DownloadInvoiceRequest::class => MockResponse::make(
             body: '%ZIPFILE%',
             status: 200,
-            headers: ['Content-Type' => 'application/pdf'],
+            headers: ['Content-Type' => 'application/zip'],
         ),
     ]);
 
     $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $response = $connector->downloadInvoice(123456);
 
-    expect($response)->toBeArray()
-        ->and($response['success'])->toBeTrue()
-        ->and($response['content'])->toBe('%ZIPFILE%');
+    expect($response)->toBeInstanceOf(DownloadInvoiceResponse::class)
+        ->and($response->success)->toBeTrue()
+        ->and($response->content)->toBe('%ZIPFILE%');
 
 });
 
@@ -42,10 +44,9 @@ it('handle anaf error', function (): void {
     $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $response = $connector->invalidateCache()->disableCaching()->downloadInvoice(123456);
 
-    expect($response)
-        ->toBeArray()
-        ->and($response['success'])->toBeFalse()
-        ->and($response['error'])->toBe('Generic error message');
+    expect($response)->toBeInstanceOf(ErrorResponse::class)
+        ->and($response->success)->toBeFalse()
+        ->and($response->error)->toBe('Generic error message');
 
 });
 

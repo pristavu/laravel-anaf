@@ -210,6 +210,17 @@ $connector->debugResponse(); // connector->debugResponse(die: true);
 
 ```
 
+### Caching
+
+For certain operations like downloading invoices cache is enabled by default to avoid multiple downloads of the same invoice and hitting rate limits (10 downloads per $downloadId/day).
+
+```php
+// If you want to disable caching for all operations you can do it like this:
+$connector->disableCache()->downloadInvoice(downloadId: $downloadId);
+// or for invalidating cached content before downloading again:
+$connector->invalidateCache()->downloadInvoice(downloadId: $downloadId);
+```
+
 ### Retrieving messages/invoices
 
 - You need to use paginated messages if you expect more than 500 messages/invoices for specified period.
@@ -251,6 +262,16 @@ $response = $connector->downloadInvoice(downloadId: $downloadId);
 if($response['success']){
     // save the zip content to a file
     Storage::disk('private')->put("/invoices/{$downloadId}.zip",$response['content']);
+    
+    // optionally you can extract files from the zip using the Extract helper without saving archive to disk    
+    $extracted = Pristavu\Anaf\Support\Extract::from($response['content']);
+    
+    // get xml invoice, signature and dto invoice objects
+    $xmlInvoice = $extracted->xmlInvoice();
+    $dtoInvoice = $extracted->dtoInvoice();        
+    $signature = $extracted->signature();
+    // or use the $extracted->toArray() method to get data as array
+    $arrayData = $extracted->toArray(); 
 }
 
 ```

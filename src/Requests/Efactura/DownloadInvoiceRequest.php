@@ -6,7 +6,10 @@ namespace Pristavu\Anaf\Requests\Efactura;
 
 use Illuminate\Support\Facades\Cache;
 use JsonException;
+use Pristavu\Anaf\Contracts\AnafResponse;
 use Pristavu\Anaf\Exceptions\AnafException;
+use Pristavu\Anaf\Responses\Efactura\DownloadInvoiceResponse;
+use Pristavu\Anaf\Responses\Efactura\ErrorResponse;
 use Saloon\CachePlugin\Contracts\Cacheable;
 use Saloon\CachePlugin\Contracts\Driver;
 use Saloon\CachePlugin\Drivers\LaravelCacheDriver;
@@ -52,23 +55,25 @@ final class DownloadInvoiceRequest extends Request implements Cacheable
     /**
      * @throws JsonException
      */
-    public function createDtoFromResponse(Response $response): array
+    public function createDtoFromResponse(Response $response): AnafResponse
     {
 
         if ($response->header('Content-Type') === 'application/json' && $response->json('eroare')) {
 
-            return [
-                'success' => false,
-                'cached' => $response->isCached(),
-                'error' => $response->json('eroare'),
-            ];
+            return new ErrorResponse(
+                success: false,
+                cached: $response->isCached(),
+                error: $response->json('eroare'),
+            );
+
         }
 
-        return [
-            'success' => $response->status() === 200,
-            'cached' => $response->isCached(),
-            'content' => $response->body(),
-        ];
+        return new DownloadInvoiceResponse(
+            success: $response->status() === 200,
+            cached: $response->isCached(),
+            content: $response->body(),
+        );
+
     }
 
     public function resolveCacheDriver(): Driver
