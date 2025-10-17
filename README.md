@@ -30,13 +30,11 @@ php artisan vendor:publish --tag="anaf-config"
 
 ## What you can do with this package
 
-### For now the package provides two main features:
-
 - OAuth2 - authentication/authorization.
     - get authorization url
     - retrieve access token
     - refresh access token 
-- eInvoice - client/connector (Oauth2 token required) for interacting with the eFactura API.
+- eFactura - client/connector (Oauth2 token required) for interacting with the eFactura API.
     - retrieve messages/invoices (regular and paginated)
     - download invoices as zip
     - extract invoice xml, signature and invoice dto from zip
@@ -45,8 +43,8 @@ php artisan vendor:publish --tag="anaf-config"
     - convert xml invoices to PDF
     - check message status
 - taxPayer - client/connector for interacting with the taxpayer API.
-    - vat status check and other taxpayer information
-    - balance sheet retrieval
+    - vat status check and other taxpayer information (by cif)
+    - balance sheet retrieval (by year)
 
 ---
 
