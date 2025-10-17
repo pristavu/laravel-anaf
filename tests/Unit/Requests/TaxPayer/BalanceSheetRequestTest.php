@@ -7,7 +7,7 @@ use Pristavu\Anaf\Requests\TaxPayer\BalanceSheetRequest;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
-it('can check a successful check a vatStatus', function (): void {
+it('can successfully retrieve balance sheet', function (): void {
 
     $mockClient = new MockClient([
         BalanceSheetRequest::class => MockResponse::make(
