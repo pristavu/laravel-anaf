@@ -28,7 +28,7 @@ You can publish the config file with:
 php artisan vendor:publish --tag="anaf-config"
 ```
 
-# What you can do with this package
+## What you can do with this package
 
 ### For now the package provides two main features:
 
@@ -39,8 +39,9 @@ php artisan vendor:publish --tag="anaf-config"
 - eInvoice - client/connector (Oauth2 token required) for interacting with the eFactura API.
     - retrieve messages/invoices (regular and paginated)
     - download invoices as zip
+    - extract invoice xml, signature and invoice dto from zip
     - validate xml invoices
-    - upload xml invoices
+    - upload xml invoices (B2B, B2C)
     - convert xml invoices to PDF
     - check message status
 - taxPayer - client/connector for interacting with the taxpayer API.
@@ -49,7 +50,7 @@ php artisan vendor:publish --tag="anaf-config"
 
 ---
 
-# OAuth2 usage
+## OAuth2 usage
 
 Add the following to your `.env` file:
 
@@ -175,7 +176,7 @@ if ($authenticator->hasExpired()) {
 
 ---
 
-# Efactura usage (Oauth2 required)
+## Efactura usage (Oauth2 required)
 
 ### Initializing the client
 
@@ -311,7 +312,7 @@ if($response->success){
     $message->dtoInvoice();       
 }
 else {
-    // handle download error
+    // handle error
     $response->error; // array of download errors
 }
 
@@ -330,9 +331,9 @@ $response = $connector->validateInvoice(
 );
 
 if($response->success){
-   // upload the invoice
+   // do something with $response 
 } else {
-   // handle validation errors
+   // handle errors
    $response->errors; // array of validation errors
 }
 
@@ -359,7 +360,7 @@ if($response->success){
     
 }
 else {
-    // handle upload error
+    // handle error
     $response->error; 
 }
 ```
@@ -384,8 +385,14 @@ if($response->success){
 $uploadId = 987654321; // the message id to check status for
 $response = $connector->messageStatus(uploadId: $uploadId);
 
-if($response['success']){
-   // do something with $response['status']  
+if($response->success){
+   // do something with $response
+   $response->status
+   $response->download_id; // download id if available
+}
+else {
+   // handle error
+   $response->error;
 }
 ```
 
