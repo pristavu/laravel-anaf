@@ -78,7 +78,7 @@ final class DownloadInvoiceRequest extends Request implements Cacheable
 
     public function resolveCacheDriver(): Driver
     {
-        return new LaravelCacheDriver(Cache::store(config()->string('anaf.efactura.cache.store', 'file')));
+        return new LaravelCacheDriver(Cache::store(config('anaf.efactura.cache.store', 'file')));
     }
 
     public function cacheExpiryInSeconds(): int
