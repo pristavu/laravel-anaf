@@ -19,9 +19,15 @@ it('can successfully retrieve balance sheet', function (): void {
         ),
     ]);
 
-    $connector = Anaf::taxPayer(29930516)->withMockClient($mockClient);
-    $response = $connector->setTimeout(20)->balanceSheet(2024);
+    $connector = Anaf::taxPayer()->withMockClient($mockClient);
+    $response = $connector->setTimeout(20)->balanceSheet(cif: 29930516, year: 2024);
 
     expect($response)->toBeArray()
         ->and($response['success'])->toBeTrue();
 });
+
+it('throws exception on invalid cif', function (): void {
+    $connector = Anaf::taxPayer();
+    $connector->balanceSheet(cif: 12, year: 2024);
+
+})->throws(InvalidArgumentException::class, $message = 'The provided CIF is invalid.');

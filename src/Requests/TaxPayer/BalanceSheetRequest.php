@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Pristavu\Anaf\Requests\TaxPayer;
 
+use InvalidArgumentException;
 use Pristavu\Anaf\Exceptions\AnafException;
+use Pristavu\Anaf\Support\Validate;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
@@ -22,7 +24,13 @@ class BalanceSheetRequest extends Request
     public function __construct(
         private readonly int $cif,
         private readonly int $year,
-    ) {}
+    ) {
+
+        if (! Validate::cif($this->cif)) {
+            throw new InvalidArgumentException('The provided CIF is invalid.');
+        }
+
+    }
 
     public function resolveEndpoint(): string
     {

@@ -33,7 +33,7 @@ php artisan vendor:publish --tag="anaf-config"
 - OAuth2 - authentication/authorization.
     - get authorization url
     - retrieve access token
-    - refresh access token 
+    - refresh access token
 - eFactura - client/connector (Oauth2 token required) for interacting with the eFactura API.
     - retrieve messages/invoices (regular and paginated)
     - download invoices as zip
@@ -42,7 +42,7 @@ php artisan vendor:publish --tag="anaf-config"
     - upload xml invoices (B2B, B2C)
     - convert xml invoices to PDF
     - check message status
-- taxPayer - client/connector (public API / No need for Oauth2) for interacting with the taxpayer API. 
+- taxPayer - client/connector (public API / No need for Oauth2) for interacting with the taxpayer API.
     - vat status check and other taxpayer information (by cif)
     - balance sheet retrieval (by year)
 
@@ -173,6 +173,7 @@ if ($authenticator->hasExpired()) {
 ```
 
 ---
+---
 
 ## Efactura usage (Oauth2 required)
 
@@ -251,8 +252,9 @@ $response = $connector->messages(cif: 123456, days: 10);
 ```
 
 ### Retrieving paginated messages/invoices
+
 - Somehow even if the paginated response should provide 500 messages per page and total messages are less than 500,
-messages are divided into two pages (eg: total 95 messages are returned as 2 pages, first with 49 and second with 46 messages).
+  messages are divided into two pages (eg: total 95 messages are returned as 2 pages, first with 49 and second with 46 messages).
 
 ```php
 // period - interval must not exceed 60 days
@@ -394,6 +396,31 @@ else {
 }
 ```
 
+---
+
+## TaxPayer usage
+
+### Initializing the client
+
+```php
+// initialize the taxPayer connector / client
+$connector = Pristavu\Anaf\Facades\Anaf::taxPayer();
+```
+
+### Checking VAT status
+
+```php
+$vatStatus = $connector->vatStatus(cif: 123456, date: '2023-12-31');
+```
+
+### Retrieving balance sheet
+
+```php
+$balanceSheet = $connector->balanceSheet(cif: 123456, year: 2022);
+```
+
+---
+
 ## Testing
 
 ```bash
@@ -437,6 +464,8 @@ test('my test', function () {
     expect($messages)->toBeArray();    
 });
 ```
+
+---
 
 ## Changelog
 

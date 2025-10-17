@@ -50,12 +50,10 @@ final class Anaf
     /**
      * Create a taxPayer connector to interact with the TaxPayer API.
      *
-     * @param  int  $cif  The Fiscal Identification Code of the entity.
-     *
      * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/Servicii_web/doc_WS_V9.txt
      */
-    public function taxPayer(int $cif): TaxPayerConnector
+    public function taxPayer(): TaxPayerConnector
     {
-        return new TaxPayerConnector($cif);
+        return new TaxPayerConnector();
     }
 }

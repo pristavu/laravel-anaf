@@ -24,11 +24,11 @@ trait SupportTaxPayer
      *
      * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/Servicii_web/doc_WS_V9.txt
      */
-    public function vatStatus(?string $date): array|object
+    public function vatStatus(int $cif, ?string $date): array|object
     {
         $date ??= now()->format('Y-m-d');
-        // $date = '2012-03-01'; // TODO: remove this line after testing
-        $request = new VatStatusRequest(cif: $this->cif, date: $date);
+
+        $request = new VatStatusRequest(cif: $cif, date: $date);
 
         return $this->send($request)->dtoOrFail();
     }
@@ -43,11 +43,10 @@ trait SupportTaxPayer
      *
      * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/doc_WS_Bilant_V1.txt
      */
-    public function balanceSheet(int $year): array|object
+    public function balanceSheet(int $cif, int $year): array|object
     {
 
-        // $date = '2012-03-01'; // TODO: remove this line after testing
-        $request = new BalanceSheetRequest(cif: $this->cif, year: $year);
+        $request = new BalanceSheetRequest(cif: $cif, year: $year);
 
         return $this->send($request)->dtoOrFail();
     }

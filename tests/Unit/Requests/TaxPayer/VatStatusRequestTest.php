@@ -19,9 +19,15 @@ it('can successfully check VAT status', function (): void {
         ),
     ]);
 
-    $connector = Anaf::taxPayer(29930516)->withMockClient($mockClient);
-    $response = $connector->setTimeout(20)->vatStatus('2024-01-01');
+    $connector = Anaf::taxPayer()->withMockClient($mockClient);
+    $response = $connector->setTimeout(20)->vatStatus(cif: 29930516, date: '2024-01-01');
 
     expect($response)->toBeArray()
         ->and($response['success'])->toBeTrue();
 });
+
+it('throws exception on invalid cif', function (): void {
+    $connector = Anaf::taxPayer();
+    $connector->vatStatus(cif: 12, date: '2024-01-01');
+
+})->throws(InvalidArgumentException::class, $message = 'The provided CIF is invalid.');
