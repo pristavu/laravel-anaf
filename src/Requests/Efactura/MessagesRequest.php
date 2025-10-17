@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Pristavu\Anaf\Requests\Efactura;
 
+use Pristavu\Anaf\Contracts\AnafResponse;
 use Pristavu\Anaf\Dto\Efactura\Message;
 use Pristavu\Anaf\Enums\MessageType;
 use Pristavu\Anaf\Exceptions\AnafException;
+use Pristavu\Anaf\Responses\Efactura\ErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\MessagesResponse;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
@@ -44,20 +47,20 @@ final class MessagesRequest extends Request
         );
     }
 
-    public function createDtoFromResponse(Response $response): array
+    public function createDtoFromResponse(Response $response): AnafResponse
     {
         if ($response->json('eroare')) {
-            return [
-                'success' => false,
-                'error' => $response->json('eroare'),
-            ];
+            return new ErrorResponse(
+                success: false,
+                error: $response->json('eroare'),
+            );
         }
 
-        return [
-            'success' => $response->status() === 200,
-            'hash' => $response->json('serial'),
-            'messages' => Message::collect($response),
-        ];
+        return new MessagesResponse(
+            success: $response->status() === 200,
+            hash: $response->json('serial'),
+            messages: Message::collect($response),
+        );
     }
 
     protected function defaultQuery(): array

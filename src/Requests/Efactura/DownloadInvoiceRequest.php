@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pristavu\Anaf\Requests\Efactura;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use JsonException;
 use Pristavu\Anaf\Contracts\AnafResponse;
 use Pristavu\Anaf\Exceptions\AnafException;
@@ -57,22 +58,11 @@ final class DownloadInvoiceRequest extends Request implements Cacheable
      */
     public function createDtoFromResponse(Response $response): AnafResponse
     {
-
         if ($response->header('Content-Type') === 'application/json' && $response->json('eroare')) {
-
-            return new ErrorResponse(
-                success: false,
-                cached: $response->isCached(),
-                error: $response->json('eroare'),
-            );
-
+            return ErrorResponse::fromResponse($response);
         }
 
-        return new DownloadInvoiceResponse(
-            success: $response->status() === 200,
-            cached: $response->isCached(),
-            content: $response->body(),
-        );
+        return DownloadInvoiceResponse::fromResponse($response);
 
     }
 
@@ -93,6 +83,6 @@ final class DownloadInvoiceRequest extends Request implements Cacheable
 
     protected function cacheKey(PendingRequest $pendingRequest): string
     {
-        return 'einvoice:download:'.$this->downloadId;
+        return 'einvoice:download:'.Str::slug(http_build_query($this->defaultQuery()));
     }
 }

@@ -229,15 +229,31 @@ $connector->invalidateCache()->downloadInvoice(downloadId: $downloadId);
 // days - number of days between 1 and 60
 // type can be one of: MessageType::{SENT/RECEIVED/ERROR/MESSAGE} -  if none provided, all types are retrieved
 
-//  sent messages/invoices for cif 123456 from last 60 days
-$response = $connector->messages(cif: 123456, days: 60, type: MessageType::SENT);
+// eg: retrieve sent messages/invoices for cif 123456 from last 60 days
+$response = $connector->messages(cif: 123456, days: 60, type: MessageType::SENT); // returns a MessagesResponse 
 
-// retrieve any type of messages for cif 123456 from last 10 days
+if($response->success){
+    $response->messages->each(function(Message $message){
+        // do something with $message
+        $message->cif; // the cif associated with the message/invoice
+        $message->upload_id; // the upload id for the message/invoice
+        $message->download_id; // the download id for the message/invoice
+        $message->type; // the type of message/invoice    
+        $message->created_at; // Carbon instance of creation date
+        $message->description; // description/details of the message/invoice
+    });
+} else {
+    // handle error
+    $response->error;
+
+// eg: retrieve any type of messages/invoices for cif 123456 from last 10 days
 $response = $connector->messages(cif: 123456, days: 10);
 
 ```
 
 ### Retrieving paginated messages/invoices
+- Somehow even if the paginated response should provide 500 messages per page and total messages are less than 500,
+messages are divided into two pages (eg: total 95 messages are returned as 2 pages, first with 49 and second with 46 messages).
 
 ```php
 // period - interval must not exceed 60 days
@@ -245,7 +261,29 @@ $response = $connector->messages(cif: 123456, days: 10);
 
 // retrieve sent messages/invoices for cif 123456 from last 60 days (paginated page 1)
 $period = \Carbon\CarbonPeriod::create(now()->subDays(60), now());
-$response = $connector->messagesPaginated(cif: 123456, period: $period, page: 1, type: MessageType::SENT);
+$response = $connector->messagesPaginated(cif: 123456, period: $period, page: 1, type: MessageType::SENT); // returns a PaginatedMessagesResponse
+
+if($response->success){
+    $response->messages->each(function(Message $message){
+        // do something with $message
+        $message->cif; // the cif associated with the message/invoice
+        $message->upload_id; // the upload id for the message/invoice
+        $message->download_id; // the download id for the message/invoice
+        $message->type; // the type of message/invoice    
+        $message->created_at; // Carbon instance of creation date
+        $message->description; // description/details of the message/invoice
+    });
+    
+    // paginated response metadata
+    $response->meta->total; // number of messages in selected period
+    $response->meta->per_page; // messages per page (default 500)
+    $response->meta->current_page; // current page number
+    $response->meta->last_page; // last page number
+} else {
+    // handle error
+    $response->error;
+}
+
 
 // or using the toPeriod method
 // retrieve any messages/invoices  for cif 123456 from last 10 days (paginated page 2)
@@ -259,19 +297,22 @@ $response = $connector->messagesPaginated(cif: 123456, period: $period, page: 2)
 $downloadId = 987654321; // the download_id of the message/invoice
 $response = $connector->downloadInvoice(downloadId: $downloadId);
 
-if($response['success']){
+if($response->success){
     // save the zip content to a file
-    Storage::disk('private')->put("/invoices/{$downloadId}.zip",$response['content']);
+    Storage::disk('private')->put("/invoices/{$downloadId}.zip",$response->content);
     
-    // optionally you can extract files from the zip using the Extract helper without saving archive to disk    
-    $extracted = Pristavu\Anaf\Support\Extract::from($response['content']);
+    // optionally you can extract files from the zip message/invoice using the Extract helper without saving archive to disk    
+    $message = Pristavu\Anaf\Support\Extract::from($response->content);
     
     // get xml invoice, signature and dto invoice objects
-    $xmlInvoice = $extracted->xmlInvoice();
-    $dtoInvoice = $extracted->dtoInvoice();        
-    $signature = $extracted->signature();
-    // or use the $extracted->toArray() method to get data as array
-    $arrayData = $extracted->toArray(); 
+    $message->xmlInvoice();
+    $message->signature();
+    // dto invoice will be null if unzipping a non invoice message (eg: xml response error message)
+    $message->dtoInvoice();       
+}
+else {
+    // handle download error
+    $response->error; // array of download errors
 }
 
 ```
@@ -288,8 +329,11 @@ $response = $connector->validateInvoice(
     standard: \Pristavu\Anaf\Enums\DocumentStandard::FCN, // optional, default is FACT1  
 );
 
-if($response['is_valid']){
+if($response->success){
    // upload the invoice
+} else {
+   // handle validation errors
+   $response->errors; // array of validation errors
 }
 
 ```
@@ -309,8 +353,14 @@ $response = $connector->uploadInvoice(
     isLegalEnforcement: false // optional, default is false
 );
 
-if($response['success']){
-    // do something with $response['upload_id']   
+if($response->success){
+    // do something with $response
+    $response->upload_id; // the upload id of the invoice
+    
+}
+else {
+    // handle upload error
+    $response->error; 
 }
 ```
 
@@ -322,9 +372,9 @@ $xml = Storage::disk('private')->get('invoices/12345/987654321.xml');
 $xml = Storage::disk('private')->path('invoices/12345/987654321.xml');
 $response = $connector->convertInvoice(xml: $xml, standard: DocumentStandard::FACT1, withoutValidation: true);
 
-if($response['success']){
+if($response->success){
     // save the pdf content to a file
-    Storage::disk('private')->put("/invoices/12345/987654321.pdf",$response['content']);
+    Storage::disk('private')->put("/invoices/12345/987654321.pdf",$response->content);
 }
 ```
 

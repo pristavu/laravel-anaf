@@ -6,6 +6,8 @@ namespace Pristavu\Anaf\Requests\Efactura;
 
 use Exception;
 use Pristavu\Anaf\Exceptions\AnafException;
+use Pristavu\Anaf\Responses\Efactura\MessageStatusErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\MessageStatusResponse;
 use Pristavu\Anaf\Support\XmlToArray;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -42,7 +44,7 @@ final class MessageStatusRequest extends Request
         );
     }
 
-    public function createDtoFromResponse(Response $response): array
+    public function createDtoFromResponse(Response $response): MessageStatusResponse|MessageStatusErrorResponse
     {
 
         try {
@@ -57,14 +59,16 @@ final class MessageStatusRequest extends Request
         }
 
         $isError = isset($data['Errors']['@attributes']['errorMessage']);
+        if ($isError) {
+            $error = $data['Errors']['@attributes']['errorMessage'] ?? 'Unknown error';
 
-        return [
-            'success' => ! $isError,
-            ...(isset($data['@attributes']['stare']) ? ['status' => $data['@attributes']['stare']] : []),
-            ...(isset($data['@attributes']['id_descarcare']) ? ['download_id' => (int) $data['@attributes']['id_descarcare']] : []),
-            ...($isError ? ['errors' => $data['Errors']['@attributes']['errorMessage']] : []),
-        ];
+            return MessageStatusErrorResponse::fromResponse($error);
+        }
 
+        $status = $data['@attributes']['stare'];
+        $downloadId = (int) @$data['@attributes']['id_descarcare'];
+
+        return MessageStatusResponse::fromResponse($status, $downloadId);
     }
 
     protected function defaultHeaders(): array

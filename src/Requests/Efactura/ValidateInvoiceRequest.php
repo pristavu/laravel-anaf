@@ -6,6 +6,8 @@ namespace Pristavu\Anaf\Requests\Efactura;
 
 use Pristavu\Anaf\Enums\DocumentStandard;
 use Pristavu\Anaf\Exceptions\AnafException;
+use Pristavu\Anaf\Responses\Efactura\ValidateErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\ValidateInvoiceResponse;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -45,14 +47,13 @@ final class ValidateInvoiceRequest extends Request implements HasBody
         );
     }
 
-    public function createDtoFromResponse(Response $response): array
+    public function createDtoFromResponse(Response $response): ValidateInvoiceResponse|ValidateErrorResponse
     {
-        return [
-            'success' => $response->status() === 200,
-            'is_valid' => $response->json('stare') === 'ok',
-            ...($response->json('Messages') ? ['errors' => $response->json('Messages')] : []),
-            'trace_id' => $response->json('trace_id'),
-        ];
+        if ($response->json('stare') === 'nok') {
+            return ValidateErrorResponse::fromResponse($response);
+        }
+
+        return ValidateInvoiceResponse::fromResponse($response);
     }
 
     protected function defaultHeaders(): array

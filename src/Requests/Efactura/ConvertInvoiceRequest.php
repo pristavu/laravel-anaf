@@ -6,6 +6,8 @@ namespace Pristavu\Anaf\Requests\Efactura;
 
 use Pristavu\Anaf\Enums\DocumentStandard;
 use Pristavu\Anaf\Exceptions\AnafException;
+use Pristavu\Anaf\Responses\Efactura\ConvertInvoiceErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\ConvertInvoiceResponse;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -46,21 +48,14 @@ final class ConvertInvoiceRequest extends Request implements HasBody
         );
     }
 
-    public function createDtoFromResponse(Response $response): array
+    public function createDtoFromResponse(Response $response): ConvertInvoiceResponse|ConvertInvoiceErrorResponse
     {
 
         if ($response->header('Content-Type') === 'application/json' && $response->json('stare') === 'nok') {
-            return [
-                'success' => false,
-                ...($response->json('Messages') ? ['errors' => $response->json('Messages')] : []),
-                'trace_id' => $response->json('trace_id'),
-            ];
+            return ConvertInvoiceErrorResponse::fromResponse($response);
         }
 
-        return [
-            'success' => $response->status() === 200,
-            'content' => $response->body(),
-        ];
+        return ConvertInvoiceResponse::fromResponse($response);
     }
 
     protected function defaultHeaders(): array

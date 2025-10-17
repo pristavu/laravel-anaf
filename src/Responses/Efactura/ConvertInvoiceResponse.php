@@ -7,11 +7,10 @@ namespace Pristavu\Anaf\Responses\Efactura;
 use Pristavu\Anaf\Contracts\AnafResponse;
 use Saloon\Http\Response;
 
-readonly class DownloadInvoiceResponse implements AnafResponse
+readonly class ConvertInvoiceResponse implements AnafResponse
 {
     public function __construct(
         public bool $success,
-        public bool $cached,
         public string $content,
     ) {}
 
@@ -19,7 +18,6 @@ readonly class DownloadInvoiceResponse implements AnafResponse
     {
         return new self(
             success: $response->status() === 200,
-            cached: $response->isCached(),
             content: $response->body(),
         );
     }

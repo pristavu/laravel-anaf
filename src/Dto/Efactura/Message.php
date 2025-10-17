@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Pristavu\Anaf\Dto\Efactura;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Pristavu\Anaf\Enums\MessageType;
-use Saloon\Contracts\DataObjects\WithResponse;
 use Saloon\Http\Response;
-use Saloon\Traits\Responses\HasResponse;
 
-class Message implements WithResponse
+readonly class Message
 {
-    use HasResponse;
-
     public function __construct(
         public int $cif,
         public int $upload_id,
@@ -45,11 +42,9 @@ class Message implements WithResponse
         );
     }
 
-    public static function collect(Response $response): array
+    public static function collect(Response $response): Collection
     {
-        return array_map(
-            fn (array $item): Message => self::fromResponse($item),
-            $response->json('mesaje', [])
-        );
+        return collect($response->json('mesaje', []))
+            ->map(fn (array $item): Message => self::fromResponse($item));
     }
 }

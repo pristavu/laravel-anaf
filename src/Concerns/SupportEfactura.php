@@ -17,8 +17,18 @@ use Pristavu\Anaf\Requests\Efactura\MessagesRequest;
 use Pristavu\Anaf\Requests\Efactura\MessageStatusRequest;
 use Pristavu\Anaf\Requests\Efactura\UploadInvoiceRequest;
 use Pristavu\Anaf\Requests\Efactura\ValidateInvoiceRequest;
+use Pristavu\Anaf\Responses\Efactura\ConvertInvoiceErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\ConvertInvoiceResponse;
 use Pristavu\Anaf\Responses\Efactura\DownloadInvoiceResponse;
 use Pristavu\Anaf\Responses\Efactura\ErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\MessagesPaginatedResponse;
+use Pristavu\Anaf\Responses\Efactura\MessagesResponse;
+use Pristavu\Anaf\Responses\Efactura\MessageStatusErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\MessageStatusResponse;
+use Pristavu\Anaf\Responses\Efactura\UploadInvoiceErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\UploadInvoiceResponse;
+use Pristavu\Anaf\Responses\Efactura\ValidateErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\ValidateInvoiceResponse;
 use Pristavu\Anaf\Support\Validate;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -41,7 +51,7 @@ trait SupportEfactura
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/listamesaje.html
      */
-    public function messages(int $cif, ?int $days = 60, ?MessageType $type = null): array|object
+    public function messages(int $cif, ?int $days = 60, ?MessageType $type = null): MessagesResponse|ErrorResponse
     {
         if (! Validate::cif($cif)) {
             throw new InvalidArgumentException('The provided CIF is invalid.');
@@ -65,7 +75,7 @@ trait SupportEfactura
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/listamesaje.html
      */
-    public function messagesPaginated(int $cif, CarbonPeriod $period, ?int $page = 1, ?MessageType $type = null): array|object
+    public function messagesPaginated(int $cif, CarbonPeriod $period, ?int $page = 1, ?MessageType $type = null): MessagesPaginatedResponse|ErrorResponse
     {
         if (! Validate::cif($cif)) {
             throw new InvalidArgumentException('The provided CIF is invalid.');
@@ -86,7 +96,7 @@ trait SupportEfactura
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/descarcare.html
      */
-    public function downloadInvoice(int $downloadId): ErrorResponse|DownloadInvoiceResponse
+    public function downloadInvoice(int $downloadId): DownloadInvoiceResponse|ErrorResponse
     {
         $request = new DownloadInvoiceRequest(downloadId: $downloadId);
 
@@ -117,28 +127,11 @@ trait SupportEfactura
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/validare.html
      */
-    public function validateInvoice(string $xml, ?DocumentStandard $standard = DocumentStandard::FACT1): array|object
+    public function validateInvoice(string $xml, ?DocumentStandard $standard = DocumentStandard::FACT1): ValidateInvoiceResponse|ValidateErrorResponse
     {
         $request = new ValidateInvoiceRequest(xml: $xml, standard: $standard);
 
         return $this->inLiveMode()->send($request)->dtoOrFail();
-    }
-
-    /**
-     * Get the status of a specific e-invoice message by its ID.
-     *
-     * @param  int  $uploadId  The ID of the e-invoice message to check the status for.
-     *
-     * @throws FatalRequestException
-     * @throws RequestException
-     *
-     * @see https://mfinante.gov.ro/static/10/eFactura/staremesaj.html
-     */
-    public function messageStatus(int $uploadId): array|object
-    {
-        $request = new MessageStatusRequest($uploadId);
-
-        return $this->send($request)->dtoOrFail();
     }
 
     /**
@@ -156,7 +149,7 @@ trait SupportEfactura
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/upload.html
      */
-    public function uploadInvoice(int $cif, string $xml, ?XmlStandard $standard = XmlStandard::UBL, ?bool $isExternal = false, ?bool $isSelfInvoice = false, ?bool $isLegalEnforcement = false): array|object
+    public function uploadInvoice(int $cif, string $xml, ?XmlStandard $standard = XmlStandard::UBL, ?bool $isExternal = false, ?bool $isSelfInvoice = false, ?bool $isLegalEnforcement = false): UploadInvoiceResponse|UploadInvoiceErrorResponse
     {
         if (! Validate::cif($cif)) {
             throw new InvalidArgumentException('The provided CIF is invalid.');
@@ -166,6 +159,51 @@ trait SupportEfactura
 
         return $this->send($request)->dtoOrFail();
 
+    }
+
+    /**
+     * Upload an e-invoice XML file or content to the ANAF system.
+     *
+     * @param  int  $cif  The Fiscal Identification Code of the entity.
+     * @param  string  $xml  The XML content or path of the e-invoice to upload.
+     * @param  XmlStandard|null  $standard  The XML standard of the e-invoice. Defaults to UBL.
+     * @param  bool|null  $isExternal  Indicates if the invoice customer is external (not a romanian entity). Defaults to false.
+     * @param  bool|null  $isSelfInvoice  Indicates if the invoice is a self-invoice. Defaults to false.
+     * @param  bool|null  $isLegalEnforcement  Indicates if the invoice is related to legal enforcement. Defaults to false.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     *
+     * @see https://mfinante.gov.ro/static/10/eFactura/upload.html
+     */
+    public function uploadInvoiceB2C(int $cif, string $xml, ?XmlStandard $standard = XmlStandard::UBL, ?bool $isExternal = false, ?bool $isSelfInvoice = false, ?bool $isLegalEnforcement = false): UploadInvoiceResponse|UploadInvoiceErrorResponse
+    {
+        if (! Validate::cif($cif)) {
+            throw new InvalidArgumentException('The provided CIF is invalid.');
+        }
+
+        $request = new UploadInvoiceRequest(cif: $cif, xml: $xml, standard: $standard, isExternal: $isExternal, isSelfInvoice: $isSelfInvoice, isLegalEnforcement: $isLegalEnforcement);
+        $request->setB2C(true);
+
+        return $this->send($request)->dtoOrFail();
+
+    }
+
+    /**
+     * Get the status of a specific e-invoice message by its ID.
+     *
+     * @param  int  $uploadId  The ID of the e-invoice message to check the status for.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     *
+     * @see https://mfinante.gov.ro/static/10/eFactura/staremesaj.html
+     */
+    public function messageStatus(int $uploadId): MessageStatusResponse|MessageStatusErrorResponse
+    {
+        $request = new MessageStatusRequest($uploadId);
+
+        return $this->send($request)->dtoOrFail();
     }
 
     /**
@@ -180,7 +218,7 @@ trait SupportEfactura
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/xmltopdf.html
      */
-    public function convertInvoice(string $xml, ?DocumentStandard $standard = DocumentStandard::FACT1, ?bool $withoutValidation = false): array|object
+    public function convertInvoice(string $xml, ?DocumentStandard $standard = DocumentStandard::FACT1, ?bool $withoutValidation = false): ConvertInvoiceResponse|ConvertInvoiceErrorResponse
     {
         $request = new ConvertInvoiceRequest(xml: $xml, standard: $standard, withoutValidation: $withoutValidation);
 
