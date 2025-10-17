@@ -98,6 +98,9 @@ trait SupportEfactura
             $request->disableCaching();
         }
 
+        // Reset cache flags after applying them for this request
+        $this->invalidateCache = false;
+        $this->disableCaching = false;
         return $this->send($request)->dtoOrFail();
 
     }
