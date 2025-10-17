@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Pristavu\Anaf\Concerns;
 
 use Carbon\CarbonPeriod;
+use Einvoicing\Invoice;
+use Einvoicing\Readers\UblReader;
 use InvalidArgumentException;
 use Pristavu\Anaf\Enums\DocumentStandard;
 use Pristavu\Anaf\Enums\MessageType;
@@ -17,8 +19,10 @@ use Pristavu\Anaf\Requests\Efactura\MessageStatusRequest;
 use Pristavu\Anaf\Requests\Efactura\UploadInvoiceRequest;
 use Pristavu\Anaf\Requests\Efactura\ValidateInvoiceRequest;
 use Pristavu\Anaf\Support\Validate;
+use RuntimeException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
+use ZipArchive;
 
 /**
  * Trait providing methods to interact with the ANAF e-invoicing (e-Factura) system.
@@ -87,7 +91,74 @@ trait SupportEfactura
     {
         $request = new DownloadInvoiceRequest(downloadId: $downloadId);
 
+        if ($this->invalidateCache) {
+            $request->invalidateCache();
+        }
+
+        if ($this->disableCaching) {
+            $request->disableCaching();
+        }
+
         return $this->send($request)->dtoOrFail();
+
+    }
+
+    /**
+     * Download and parse a specific e-invoice message by its ID into an Invoice object.
+     *
+     * @param  int  $downloadId  The ID of the e-invoice message to download and parse.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws RuntimeException
+     */
+    public function readInvoice(int $downloadId): Invoice|array
+    {
+        $request = new DownloadInvoiceRequest(downloadId: $downloadId);
+
+        if ($this->invalidateCache) {
+            $request->invalidateCache();
+        }
+
+        if ($this->disableCaching) {
+            $request->disableCaching();
+        }
+
+        $response = $this->send($request)->dtoOrFail();
+
+        if (! isset($response['success']) || $response['success'] === false) {
+            return $response;
+        }
+
+        if (! isset($response['content'])) {
+            throw new RuntimeException('No content found in the response.');
+        }
+
+        $tmp = tmpfile();
+        fwrite($tmp, $response['content']);
+
+        $zip = new ZipArchive();
+        $zip->open(stream_get_meta_data($tmp)['uri']);
+
+        $xmlInvoice = collect(range(0, $zip->numFiles - 1))
+            ->map(fn ($index) => $zip->getNameIndex($index))
+
+            ->reject(fn ($name) => str_starts_with($name, 'semnatura_'))
+            ->first();
+
+        $xmlString = $zip->getFromName($xmlInvoice);
+
+        $zip->close();
+        fclose($tmp);
+
+        $reader = new UblReader();
+        // return $reader->import($xmlString);
+
+        return [
+            'success' => $response,
+            'content' => $xmlString,
+            'invoice' => $reader->import($xmlString),
+        ];
 
     }
 

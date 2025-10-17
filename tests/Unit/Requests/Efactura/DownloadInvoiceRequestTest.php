@@ -40,7 +40,7 @@ it('handle anaf error', function (): void {
     ]);
 
     $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
-    $response = $connector->downloadInvoice(123456);
+    $response = $connector->invalidateCache()->disableCaching()->downloadInvoice(123456);
 
     expect($response)
         ->toBeArray()
@@ -65,6 +65,6 @@ it('throws exception on bad request', function (): void {
     ]);
 
     $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
-    $connector->downloadInvoice(123456);
+    $connector->invalidateCache()->disableCaching()->downloadInvoice(123456);
 
 })->throws(AnafException::class, 'Parametrul id este obligatoriu', 400);
