@@ -18,13 +18,47 @@ final class EfacturaConnector extends Connector
 
     private int $timeoutInSeconds;
 
+    private bool $disableCaching;
+
+    private bool $invalidateCache = false;
+
     public function __construct(
         private readonly string $accessToken,
     ) {
         $this->testMode = config('anaf.efactura.test_mode', false);
-        $this->timeoutInSeconds = config('anaf.efactura.timeout', 15);
+        $this->timeoutInSeconds = (int) config('anaf.request_timeout', 15);
+        $this->disableCaching = config('anaf.efactura.cache.enabled', true) === false;
     }
 
+    /**
+     * Invalidate the cache for the next request.
+     */
+    public function invalidateCache(): self
+    {
+
+        $this->invalidateCache = true;
+
+        return $this;
+    }
+
+    /**
+     * Disable caching for the next request.
+     */
+    public function disableCaching(): self
+    {
+
+        $this->disableCaching = true;
+
+        return $this;
+
+    }
+
+    /**
+     * Enable test mode for the connector.
+     * This will switch the base URL to the test environment.
+     *
+     * @return $this
+     */
     public function inTestMode(): self
     {
         $this->testMode = true;
@@ -70,6 +104,6 @@ final class EfacturaConnector extends Connector
 
     protected function defaultAuth(): ?TokenAuthenticator
     {
-        return $this->accessToken !== '' && $this->accessToken !== '0' ? new TokenAuthenticator($this->accessToken) : null;
+        return blank($this->accessToken) ? null : new TokenAuthenticator($this->accessToken);
     }
 }

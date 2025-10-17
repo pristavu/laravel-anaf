@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Pristavu\Anaf\Exceptions\AnafException;
 use Pristavu\Anaf\Facades\Anaf;
 use Pristavu\Anaf\Requests\Efactura\MessageStatusRequest;
+use Pristavu\Anaf\Responses\Efactura\MessageStatusErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\MessageStatusResponse;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
@@ -18,13 +20,14 @@ it('can check a successful message status', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $response = $connector->messageStatus(1234);
 
-    expect($response)->toBeArray()
-        ->and($response['success'])->toBeTrue()
-        ->and($response['status'])->toBe('ok')
-        ->and($response['download_id'])->toBe(1234);
+    /** @var MessageStatusResponse $response */
+    expect($response)->toBeInstanceOf(MessageStatusResponse::class)
+        ->and($response->success)->toBeTrue()
+        ->and($response->status)->toBe('ok')
+        ->and($response->download_id)->toBe(1234);
 });
 
 it('can check a pending message status', function (): void {
@@ -37,12 +40,13 @@ it('can check a pending message status', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $response = $connector->messageStatus(1234);
 
-    expect($response)->toBeArray()
-        ->and($response['success'])->toBeTrue()
-        ->and($response['status'])->toBe('in prelucrare');
+    expect($response)->toBeInstanceOf(MessageStatusResponse::class)
+        ->and($response->success)->toBeTrue()
+        ->and($response->status)->toBe('in prelucrare')
+        ->and($response->download_id)->toBe(0);
 });
 
 it('shows error message', function (): void {
@@ -58,12 +62,12 @@ it('shows error message', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $response = $connector->messageStatus(1234);
 
-    expect($response)->toBeArray()
-        ->and($response['success'])->toBeFalse()
-        ->and($response['errors'])->toBe('Nu aveti dreptul de inteorgare pentru id_incarcare= 18');
+    expect($response)->toBeInstanceOf(MessageStatusErrorResponse::class)
+        ->and($response->success)->toBeFalse()
+        ->and($response->error)->toBe('Nu aveti dreptul de inteorgare pentru id_incarcare= 18');
 
 });
 
@@ -77,7 +81,7 @@ it('throws exception on invalid xml', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $connector->messageStatus(123456);
 
 })->throws(AnafException::class, 'Invalid XML response', 0);
@@ -97,7 +101,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $connector->messageStatus(123456);
 
 })->throws(AnafException::class, 'Parametrul id_incarcare este obligatoriu', 400);

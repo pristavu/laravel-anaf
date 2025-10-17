@@ -10,3 +10,10 @@ parameters:
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
+    type_coverage:
+        return: 95
+        param: 95
+        property: 95
+        declare: 95
+        constant: 95
+

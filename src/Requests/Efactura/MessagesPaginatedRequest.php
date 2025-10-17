@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace Pristavu\Anaf\Requests\Efactura;
 
 use Carbon\CarbonPeriod;
-use Pristavu\Anaf\Dto\Efactura\Message;
+use Pristavu\Anaf\Contracts\AnafResponse;
 use Pristavu\Anaf\Enums\MessageType;
 use Pristavu\Anaf\Exceptions\AnafException;
+use Pristavu\Anaf\Responses\Efactura\ErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\MessagesPaginatedResponse;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Throwable;
 
 /**
- * https://mfinante.gov.ro/static/10/eFactura/listamesaje.html#/EFacturaListaMesaje/getPaginatie
+ * Retrieve paginated e-invoice messages for a specific Fiscal Identification Code within a given date range.
+ *
+ * @see https://mfinante.gov.ro/static/10/eFactura/listamesaje.html#/EFacturaListaMesaje/getPaginatie
  */
 final class MessagesPaginatedRequest extends Request
 {
@@ -41,26 +45,17 @@ final class MessagesPaginatedRequest extends Request
         );
     }
 
-    public function createDtoFromResponse(Response $response): array
+    public function createDtoFromResponse(Response $response): AnafResponse
     {
         if ($response->json('eroare')) {
-            return [
-                'success' => false,
-                'error' => $response->json('eroare'),
-            ];
+            return new ErrorResponse(
+                success: false,
+                error: $response->json('eroare'),
+            );
         }
 
-        return [
-            'success' => $response->status() === 200,
-            'hash' => $response->json('serial'),
-            'messages' => Message::collect($response),
-            'meta' => [
-                'total' => $response->json('numar_total_inregistrari') ?? 0,
-                'per_page' => $response->json('numar_total_inregistrari_per_pagina') ?? 0,
-                'current_page' => $response->json('index_pagina_curenta') ?? 0,
-                'last_page' => $response->json('numar_total_pagini') ?? 0,
-            ],
-        ];
+        return MessagesPaginatedResponse::fromResponse($response);
+
     }
 
     protected function defaultQuery(): array

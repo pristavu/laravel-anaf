@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+        <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+        <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+        <Reference URI="">
+            <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+            <DigestValue>ABCD</DigestValue>
+        </Reference>
+    </SignedInfo>
+    <SignatureValue>ABCD</SignatureValue>
+    <KeyInfo>
+        <X509Data>
+            <X509SubjectName>1.2.840.113549.1.9.1=#160f636f6e7461637440616e61662e726f,CN=ANAF TEST,OU=ANAF-TEST,O=ANAF-TEST,L=Bucharest,ST=Bucharest,C=RO</X509SubjectName>
+            <X509Certificate>ABCDCEFGHIJKLMNOPQRSTUVWXYZ0123456789</X509Certificate>
+        </X509Data>
+    </KeyInfo>
+</Signature>

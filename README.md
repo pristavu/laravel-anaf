@@ -28,21 +28,27 @@ You can publish the config file with:
 php artisan vendor:publish --tag="anaf-config"
 ```
 
-# What you can do with this package
+## What you can do with this package
 
-### For now the package provides two main features:
 - OAuth2 - authentication/authorization.
-- Efactura - client/connector.
-  - Retrieve messages/invoices (regular and paginated)
-  - Download invoices as zip
-  - Validate xml invoices
-  - Upload xml invoices
-  - Convert xml invoices to PDF
-  - Check message status
+    - get authorization url
+    - retrieve access token
+    - refresh access token
+- eFactura - client/connector (Oauth2 token required) for interacting with the eFactura API.
+    - retrieve messages/invoices (regular and paginated)
+    - download invoices as zip
+    - extract invoice xml, signature and invoice dto from zip
+    - validate xml invoices
+    - upload xml invoices (B2B, B2C)
+    - convert xml invoices to PDF
+    - check message status
+- taxPayer - client/connector (public API / No need for Oauth2) for interacting with the taxpayer API.
+    - vat status check and other taxpayer information (by cif)
+    - balance sheet retrieval (by year)
 
 ---
 
-# OAuth2 usage
+## OAuth2 usage
 
 Add the following to your `.env` file:
 
@@ -136,7 +142,6 @@ public function __invoke(Request $request): ?RedirectResponse
 }
 ```
 
-
 ### Refreshing existing access token
 
 ```php
@@ -168,17 +173,20 @@ if ($authenticator->hasExpired()) {
 ```
 
 ---
+---
 
-# Efactura usage
+## Efactura usage (Oauth2 required)
 
 ### Initializing the client
 
 ```php
+// You need a valid access token to initialize the efactura connector
+
 // retrieve access token from database or other storage
 $accessToken = Pristavu\Anaf\Models\AccessToken::query()->where('user_id', auth()->id())->first()->access_token;
 
 // initialize the efactura connector / client
-$connector = Pristavu\Anaf\Facades\Anaf::efactura(accessToken: $accessToken);
+$connector = Pristavu\Anaf\Facades\Anaf::eFactura(accessToken: $accessToken);
 ```
 
 ### Switching to test mode (sandbox)
@@ -202,6 +210,17 @@ $connector->debugResponse(); // connector->debugResponse(die: true);
 
 ```
 
+### Caching
+
+- For certain operations like downloading invoices, cache is enabled by default to avoid hitting ANAF download limit rate (10 downloads/day for same $downloadId).
+
+```php
+// If you want to disable caching for all operations you can do it like this:
+$connector->disableCaching()->downloadInvoice(downloadId: $downloadId);
+// or for invalidating cached content before downloading again:
+$connector->invalidateCache()->downloadInvoice(downloadId: $downloadId);
+```
+
 ### Retrieving messages/invoices
 
 - You need to use paginated messages if you expect more than 500 messages/invoices for specified period.
@@ -210,15 +229,32 @@ $connector->debugResponse(); // connector->debugResponse(die: true);
 // days - number of days between 1 and 60
 // type can be one of: MessageType::{SENT/RECEIVED/ERROR/MESSAGE} -  if none provided, all types are retrieved
 
-//  sent messages/invoices for cif 123456 from last 60 days
-$response = $connector->messages(cif: 123456, days: 60, type: MessageType::SENT);
+// eg: retrieve sent messages/invoices for cif 123456 from last 60 days
+$response = $connector->messages(cif: 123456, days: 60, type: MessageType::SENT); // returns a MessagesResponse 
 
-// retrieve any type of messages for cif 123456 from last 10 days
+if($response->success){
+    $response->messages->each(function(Message $message){
+        // do something with $message
+        $message->cif; // the cif associated with the message/invoice
+        $message->upload_id; // the upload id for the message/invoice
+        $message->download_id; // the download id for the message/invoice
+        $message->type; // the type of message/invoice    
+        $message->created_at; // Carbon instance of creation date
+        $message->description; // description/details of the message/invoice
+    });
+} else {
+    // handle error
+    $response->error;
+
+// eg: retrieve any type of messages/invoices for cif 123456 from last 10 days
 $response = $connector->messages(cif: 123456, days: 10);
 
 ```
 
 ### Retrieving paginated messages/invoices
+
+- Somehow even if the paginated response should provide 500 messages per page and total messages are less than 500,
+  messages are divided into two pages (eg: total 95 messages are returned as 2 pages, first with 49 and second with 46 messages).
 
 ```php
 // period - interval must not exceed 60 days
@@ -226,7 +262,29 @@ $response = $connector->messages(cif: 123456, days: 10);
 
 // retrieve sent messages/invoices for cif 123456 from last 60 days (paginated page 1)
 $period = \Carbon\CarbonPeriod::create(now()->subDays(60), now());
-$response = $connector->messagesPaginated(cif: 123456, period: $period, page: 1, type: MessageType::SENT);
+$response = $connector->messagesPaginated(cif: 123456, period: $period, page: 1, type: MessageType::SENT); // returns a PaginatedMessagesResponse
+
+if($response->success){
+    $response->messages->each(function(Message $message){
+        // do something with $message
+        $message->cif; // the cif associated with the message/invoice
+        $message->upload_id; // the upload id for the message/invoice
+        $message->download_id; // the download id for the message/invoice
+        $message->type; // the type of message/invoice    
+        $message->created_at; // Carbon instance of creation date
+        $message->description; // description/details of the message/invoice
+    });
+    
+    // paginated response metadata
+    $response->meta->total; // number of messages in selected period
+    $response->meta->per_page; // messages per page (default 500)
+    $response->meta->current_page; // current page number
+    $response->meta->last_page; // last page number
+} else {
+    // handle error
+    $response->error;
+}
+
 
 // or using the toPeriod method
 // retrieve any messages/invoices  for cif 123456 from last 10 days (paginated page 2)
@@ -240,9 +298,22 @@ $response = $connector->messagesPaginated(cif: 123456, period: $period, page: 2)
 $downloadId = 987654321; // the download_id of the message/invoice
 $response = $connector->downloadInvoice(downloadId: $downloadId);
 
-if($response['success']){
+if($response->success){
     // save the zip content to a file
-    Storage::disk('private')->put("/invoices/{$downloadId}.zip",$response['content']);
+    Storage::disk('private')->put("/invoices/{$downloadId}.zip",$response->content);
+    
+    // optionally you can extract files from the zip message/invoice using the Extract helper without saving archive to disk    
+    $message = Pristavu\Anaf\Support\Extract::from($response->content);
+    
+    // get xml invoice, signature and dto invoice objects
+    $message->xmlInvoice();
+    $message->signature();
+    // dto invoice will be null if unzipping a non invoice message (eg: xml response error message)
+    $message->dtoInvoice();       
+}
+else {
+    // handle error
+    $response->error; // array of download errors
 }
 
 ```
@@ -259,8 +330,11 @@ $response = $connector->validateInvoice(
     standard: \Pristavu\Anaf\Enums\DocumentStandard::FCN, // optional, default is FACT1  
 );
 
-if($response['is_valid']){
-   // upload the invoice
+if($response->success){
+   // do something with $response 
+} else {
+   // handle errors
+   $response->errors; // array of validation errors
 }
 
 ```
@@ -280,8 +354,14 @@ $response = $connector->uploadInvoice(
     isLegalEnforcement: false // optional, default is false
 );
 
-if($response['success']){
-    // do something with $response['upload_id']   
+if($response->success){
+    // do something with $response
+    $response->upload_id; // the upload id of the invoice
+    
+}
+else {
+    // handle error
+    $response->error; 
 }
 ```
 
@@ -293,9 +373,9 @@ $xml = Storage::disk('private')->get('invoices/12345/987654321.xml');
 $xml = Storage::disk('private')->path('invoices/12345/987654321.xml');
 $response = $connector->convertInvoice(xml: $xml, standard: DocumentStandard::FACT1, withoutValidation: true);
 
-if($response['success']){
+if($response->success){
     // save the pdf content to a file
-    Storage::disk('private')->put("/invoices/12345/987654321.pdf",$response['content']);
+    Storage::disk('private')->put("/invoices/12345/987654321.pdf",$response->content);
 }
 ```
 
@@ -305,10 +385,41 @@ if($response['success']){
 $uploadId = 987654321; // the message id to check status for
 $response = $connector->messageStatus(uploadId: $uploadId);
 
-if($response['success']){
-   // do something with $response['status']  
+if($response->success){
+   // do something with $response
+   $response->status
+   $response->download_id; // download id if available
+}
+else {
+   // handle error
+   $response->error;
 }
 ```
+
+---
+
+## TaxPayer usage
+
+### Initializing the client
+
+```php
+// initialize the taxPayer connector / client
+$connector = Pristavu\Anaf\Facades\Anaf::taxPayer();
+```
+
+### Checking VAT status
+
+```php
+$vatStatus = $connector->vatStatus(cif: 123456, date: '2023-12-31');
+```
+
+### Retrieving balance sheet
+
+```php
+$balanceSheet = $connector->balanceSheet(cif: 123456, year: 2022);
+```
+
+---
 
 ## Testing
 
@@ -346,13 +457,15 @@ test('my test', function () {
     ]);
     
     // act
-    $efactura = Anaf::efactura(accessToken: 'TEST_TOKEN');
-    $messages = $efactura->withMockClient($mockClient)->messages(cif: 123456, days: 60);
+    $connector = Anaf::eFactura(accessToken: 'TEST_TOKEN');
+    $messages = $connector->withMockClient($mockClient)->messages(cif: 123456, days: 60);
     
     // assert
     expect($messages)->toBeArray();    
 });
 ```
+
+---
 
 ## Changelog
 

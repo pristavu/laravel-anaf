@@ -7,11 +7,20 @@ namespace Pristavu\Anaf;
 use InvalidArgumentException;
 use Pristavu\Anaf\Connectors\EfacturaConnector;
 use Pristavu\Anaf\Connectors\OAuthConnector;
+use Pristavu\Anaf\Connectors\TaxPayerConnector;
 
 final class Anaf
 {
     /**
      * Create an OAuth token to be used with Anaf API.
+     *
+     * @param  string|null  $clientId  The OAuth2 client ID. If null, it will be fetched from the configuration.
+     * @param  string|null  $clientSecret  The OAuth2 client secret. If null, it will be fetched from the configuration.
+     * @param  string|null  $redirectUri  The OAuth2 redirect URI. If null, it will be fetched from the configuration.
+     *
+     * @throws InvalidArgumentException If any of the required parameters are missing.
+     *
+     * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/API/Oauth_procedura_inregistrare_aplicatii_portal_ANAF.pdf
      */
     public static function oauth(?string $clientId = null, ?string $clientSecret = null, ?string $redirectUri = null): OAuthConnector
     {
@@ -28,9 +37,23 @@ final class Anaf
 
     /**
      * Create an Efactura connector to interact with the Efactura API.
+     *
+     * @param  string  $accessToken  The OAuth2 access token.
+     *
+     * @see https://mfinante.gov.ro/static/10/eFactura/prezentare%20api%20efactura.pdf
      */
-    public function efactura(string $accessToken): EfacturaConnector
+    public function eFactura(string $accessToken): EfacturaConnector
     {
         return new EfacturaConnector($accessToken);
+    }
+
+    /**
+     * Create a taxPayer connector to interact with the TaxPayer API.
+     *
+     * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/Servicii_web/doc_WS_V9.txt
+     */
+    public function taxPayer(): TaxPayerConnector
+    {
+        return new TaxPayerConnector();
     }
 }

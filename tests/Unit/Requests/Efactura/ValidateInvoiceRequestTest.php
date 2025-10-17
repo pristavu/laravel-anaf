@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 use Pristavu\Anaf\Enums\DocumentStandard;
+use Pristavu\Anaf\Exceptions\AnafException;
 use Pristavu\Anaf\Facades\Anaf;
 use Pristavu\Anaf\Requests\Efactura\ValidateInvoiceRequest;
+use Pristavu\Anaf\Responses\Efactura\ValidateErrorResponse;
+use Pristavu\Anaf\Responses\Efactura\ValidateInvoiceResponse;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
@@ -28,12 +31,12 @@ it('validate correct xml invoice', function (): void {
 </Invoice>
 XML;
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $response = $connector->validateInvoice($xml, DocumentStandard::FACT1);
 
-    expect($response)->toBeArray()
-        ->and($response['success'])->toBeTrue()
-        ->and($response['trace_id'])->toBe('c8c9da20-843f-4130-91d1-4ee8b0baaa30');
+    expect($response)->toBeInstanceOf(ValidateInvoiceResponse::class)
+        ->and($response->success)->toBeTrue()
+        ->and($response->trace_id)->toBe('c8c9da20-843f-4130-91d1-4ee8b0baaa30');
 
 });
 
@@ -56,15 +59,15 @@ it('handle anaf error', function (): void {
 
     $xml = __DIR__.'/../../../Fixtures/Efactura/file.xml';
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $response = $connector->validateInvoice($xml);
 
-    expect($response)->toBeArray()
-        ->and($response['success'])->toBeTrue()
-        ->and($response['is_valid'])->toBeFalse()
-        ->and($response['errors'])->toBeArray()
-        ->and(count($response['errors']))->toBe(2)
-        ->and($response['trace_id'])->toBe('c8c9da20-843f-4130-91d1-4ee8b0baaa30');
+    /** @var ValidateErrorResponse $response */
+    expect($response)->toBeInstanceOf(ValidateErrorResponse::class)
+        ->and($response->success)->toBeFalse()
+        ->and($response->errors)->toBeArray()
+        ->and(count($response->errors))->toBe(2)
+        ->and($response->trace_id)->toBe('c8c9da20-843f-4130-91d1-4ee8b0baaa30');
 });
 
 it('throws exception on bad request', function (): void {
@@ -82,7 +85,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::efactura('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $connector->validateInvoice('1234567890');
 
-})->throws(Pristavu\Anaf\Exceptions\AnafException::class, 'Not Found', 404);
+})->throws(AnafException::class, 'Not Found', 404);
