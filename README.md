@@ -186,7 +186,7 @@ if ($authenticator->hasExpired()) {
 $accessToken = Pristavu\Anaf\Models\AccessToken::query()->where('user_id', auth()->id())->first()->access_token;
 
 // initialize the efactura connector / client
-$connector = Pristavu\Anaf\Facades\Anaf::eInvoice(accessToken: $accessToken);
+$connector = Pristavu\Anaf\Facades\Anaf::eFactura(accessToken: $accessToken);
 ```
 
 ### Switching to test mode (sandbox)

@@ -37,7 +37,7 @@ it('can retrieve efactura paginated messages', function ($messageType, $messageL
         ),
     ]);
 
-    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $period = Carbon\CarbonPeriod::create(now()->subDays(2), now());
     $response = $connector->messagesPaginated(8000000000, $period, 1, $messageType);
 
@@ -68,7 +68,7 @@ it('can retrieve efactura paginated messages', function ($messageType, $messageL
 ]);
 
 it('throws exception on invalid cif', function (): void {
-    $connector = Anaf::eInvoice('accessToken');
+    $connector = Anaf::eFactura('accessToken');
 
     $period = Carbon\CarbonPeriod::create(now()->subDays(2), now());
     $connector->messagesPaginated(cif: 12345, period: $period);
@@ -86,7 +86,7 @@ it('handle anaf error', function (): void {
         ),
     ]);
 
-    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $period = Carbon\CarbonPeriod::create(now()->subDays(2), now());
     $response = $connector->messagesPaginated(cif: 29930516, period: $period);
 
@@ -112,7 +112,7 @@ it('throws exception on bad request', function (): void {
         ),
     ]);
 
-    $connector = Anaf::eInvoice('accessToken')->withMockClient($mockClient);
+    $connector = Anaf::eFactura('accessToken')->withMockClient($mockClient);
     $period = Carbon\CarbonPeriod::create(now()->subDays(2), now());
     $response = $connector->messagesPaginated(cif: 29930516, period: $period);
 

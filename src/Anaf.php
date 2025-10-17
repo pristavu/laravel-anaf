@@ -42,7 +42,7 @@ final class Anaf
      *
      * @see https://mfinante.gov.ro/static/10/eFactura/prezentare%20api%20efactura.pdf
      */
-    public function eInvoice(string $accessToken): EfacturaConnector
+    public function eFactura(string $accessToken): EfacturaConnector
     {
         return new EfacturaConnector($accessToken);
     }
