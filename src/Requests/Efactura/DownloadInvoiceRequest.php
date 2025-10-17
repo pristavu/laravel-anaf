@@ -49,6 +49,9 @@ final class DownloadInvoiceRequest extends Request implements Cacheable
         );
     }
 
+    /**
+     * @throws JsonException
+     */
     public function createDtoFromResponse(Response $response): array
     {
 
@@ -83,8 +86,8 @@ final class DownloadInvoiceRequest extends Request implements Cacheable
         return ['id' => $this->downloadId];
     }
 
-    protected function cacheKey(PendingRequest $pendingRequest): ?string
+    protected function cacheKey(PendingRequest $pendingRequest): string
     {
-        return $this->downloadId ? 'efactura_invoice_'.$this->downloadId : null;
+        return 'einvoice:download:'.$this->downloadId;
     }
 }

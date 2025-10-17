@@ -111,6 +111,8 @@ trait SupportEfactura
      * @throws FatalRequestException
      * @throws RequestException
      * @throws RuntimeException
+     *
+     * @see https://mfinante.gov.ro/static/10/eFactura/descarcare.html
      */
     public function readInvoice(int $downloadId): Invoice|array
     {
@@ -141,9 +143,9 @@ trait SupportEfactura
         $zip->open(stream_get_meta_data($tmp)['uri']);
 
         $xmlInvoice = collect(range(0, $zip->numFiles - 1))
-            ->map(fn ($index) => $zip->getNameIndex($index))
+            ->map(fn ($index): string|false => $zip->getNameIndex($index))
 
-            ->reject(fn ($name) => str_starts_with($name, 'semnatura_'))
+            ->reject(fn ($name): bool => str_starts_with((string) $name, 'semnatura_'))
             ->first();
 
         $xmlString = $zip->getFromName($xmlInvoice);
