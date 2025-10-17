@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Pristavu\Anaf\Facades\Anaf;
 use Pristavu\Anaf\Requests\TaxPayer\BalanceSheetRequest;
-use Pristavu\Anaf\Requests\TaxPayer\VatStatusRequest;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 

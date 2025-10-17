@@ -20,12 +20,17 @@
     ],
     "require": {
         "php": "^8.3|^8.4",
-        "illuminate/contracts": "^11.0||^12.0",
-        "saloonphp/saloon": "^3.14",
-        "spatie/laravel-package-tools": "^1.92.7",
-        "ext-simplexml": "*",
         "ext-dom": "*",
-        "ext-libxml": "*"
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
+        "ext-zip": "*",
+        "illuminate/cache": "^11.0||^12.0",
+        "illuminate/contracts": "^11.0||^12.0",
+        "illuminate/support": "^11.0||^12.0",
+        "josemmo/einvoicing": "^0.3.1",
+        "saloonphp/cache-plugin": "^3.0",
+        "saloonphp/saloon": "^3.14",
+        "spatie/laravel-package-tools": "^1.92.7"
     },
     "require-dev": {
         "laravel/pint": "^1.25.1",
