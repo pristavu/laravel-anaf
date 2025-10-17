@@ -216,7 +216,7 @@ $connector->debugResponse(); // connector->debugResponse(die: true);
 
 ```php
 // If you want to disable caching for all operations you can do it like this:
-$connector->disableCache()->downloadInvoice(downloadId: $downloadId);
+$connector->disableCaching()->downloadInvoice(downloadId: $downloadId);
 // or for invalidating cached content before downloading again:
 $connector->invalidateCache()->downloadInvoice(downloadId: $downloadId);
 ```
