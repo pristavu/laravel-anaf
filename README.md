@@ -212,7 +212,7 @@ $connector->debugResponse(); // connector->debugResponse(die: true);
 
 ### Caching
 
-For certain operations like downloading invoices cache is enabled by default to avoid multiple downloads of the same invoice and hitting rate limits (10 downloads per $downloadId/day).
+- For certain operations like downloading invoices, cache is enabled by default to avoid hitting ANAF download limit rate (10 downloads/day for same $downloadId).
 
 ```php
 // If you want to disable caching for all operations you can do it like this:
