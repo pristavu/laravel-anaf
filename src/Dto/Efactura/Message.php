@@ -6,7 +6,6 @@ namespace Pristavu\Anaf\Dto\Efactura;
 
 use Illuminate\Support\Carbon;
 use Pristavu\Anaf\Enums\MessageType;
-use RuntimeException;
 use Saloon\Http\Response;
 
 class Message

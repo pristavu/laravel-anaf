@@ -44,8 +44,8 @@ final class DownloadInvoiceRequest extends Request implements Cacheable
     {
         return new AnafException(
             response: $response,
-            message: $response->json('message') ?? $response->json('error') ?? 'Unknown error',
-            code: (int) $response->json('status') ?? (int) $senderException?->getCode() ?? 0,
+            message: $response->json('message') ?? $response->json('error') ?? $senderException?->getMessage() ?? 'Request failed',
+            code: $response->json('status') ?? $senderException?->getCode() ?? 0,
         );
     }
 

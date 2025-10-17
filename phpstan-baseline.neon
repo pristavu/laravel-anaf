@@ -3,6 +3,15 @@ parameters:
 		-
 			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
 			identifier: larastan.noEnvCallsOutsideOfConfig
-			count: 10
-			path: *config/*.php
+			count: 9
+			path: config/anaf.php
+
+		-
+			message: '#^Out of 109 possible param types, only 107 \- 98\.1 %% actually have it\. Add more param types to get over 99 %%$#'
+			identifier: typeCoverage.paramTypeCoverage
+			count: 2
+			path: src/Connectors/EfacturaConnector.php
+
+
+
 

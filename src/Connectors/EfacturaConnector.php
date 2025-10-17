@@ -103,6 +103,6 @@ final class EfacturaConnector extends Connector
 
     protected function defaultAuth(): ?TokenAuthenticator
     {
-        return $this->accessToken !== '' && $this->accessToken !== '0' ? new TokenAuthenticator($this->accessToken) : null;
+        return blank($this->accessToken) ? null : new TokenAuthenticator($this->accessToken);
     }
 }
