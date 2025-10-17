@@ -12,11 +12,11 @@ return [
     ],
     // eFactura settings
     'efactura' => [
-        'test_mode' => env('ANAF_EFACTURA_TEST_MODE', false),
+        'test_mode' => env('ANAF_EFACTURA_TEST_MODE', false), // true for sandbox, false for production
         'cache' => [
-            'store' => env('ANAF_EFACTURA_CACHE_STORE', env('CACHE_STORE', 'file')), // e.g., 'file', 'database', 'redis'
+            'store' => env('ANAF_EFACTURA_CACHE_STORE', 'file'), // e.g., 'file', 'database', 'redis'
             'enabled' => env('ANAF_EFACTURA_CACHE_ENABLED', true),
-            'ttl' => env('ANAF_EFACTURA_CACHE_TTL', 3600), // in seconds
+            'ttl' => env('ANAF_EFACTURA_CACHE_TTL', 84600), // in seconds
         ],
     ],
 
