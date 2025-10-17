@@ -42,7 +42,7 @@ php artisan vendor:publish --tag="anaf-config"
     - upload xml invoices (B2B, B2C)
     - convert xml invoices to PDF
     - check message status
-- taxPayer - client/connector for interacting with the taxpayer API.
+- taxPayer - client/connector (public API / No need for Oauth2) for interacting with the taxpayer API. 
     - vat status check and other taxpayer information (by cif)
     - balance sheet retrieval (by year)
 
