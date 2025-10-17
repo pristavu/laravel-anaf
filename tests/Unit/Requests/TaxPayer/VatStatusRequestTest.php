@@ -7,7 +7,7 @@ use Pristavu\Anaf\Requests\TaxPayer\VatStatusRequest;
 use Saloon\Http\Faking\MockClient;
 use Saloon\Http\Faking\MockResponse;
 
-it('can check a successful check a vatStatus', function (): void {
+it('can successfully check VAT status', function (): void {
 
     $mockClient = new MockClient([
         VatStatusRequest::class => MockResponse::make(
