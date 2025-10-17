@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Pristavu\Anaf\Support\Extract;
 
-it('can extract files from zip archive path', function ($archive): void {
+it('can extract files from zip archive inputs', function ($archive): void {
 
     $extract = Extract::from($archive);
 
@@ -20,13 +20,7 @@ it('can extract files from zip archive path', function ($archive): void {
 ]);
 
 it('throws exception for invalid zip archive', function ($archive): void {
-
-    $extract = Extract::from('not-a-valid-zip-archive');
-
-    expect($extract->xmlInvoice())->toBeString()
-        ->and($extract->signature())->toBeString()
-        ->and($extract->dtoInvoice())->toBeInstanceOf(Einvoicing\Invoice::class);
-
+    Extract::from($archive);
 })->with([
     'not-valid-zip' => 'not-a-valid-zip-archive',
     'not-valid-base64' => base64_encode('not-a-valid-zip-archive'),
