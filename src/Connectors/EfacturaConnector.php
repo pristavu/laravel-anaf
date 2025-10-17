@@ -18,7 +18,7 @@ final class EfacturaConnector extends Connector
 
     private int $timeoutInSeconds;
 
-    private bool $disableCaching = false;
+    private bool $disableCaching;
 
     private bool $invalidateCache = false;
 
@@ -27,6 +27,7 @@ final class EfacturaConnector extends Connector
     ) {
         $this->testMode = config('anaf.efactura.test_mode', false);
         $this->timeoutInSeconds = (int) config('anaf.request_timeout', 15);
+        $this->disableCaching = config('anaf.efactura.cache.enabled', true) === false;
     }
 
     /**
