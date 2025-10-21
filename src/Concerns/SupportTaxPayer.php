@@ -24,7 +24,7 @@ trait SupportTaxPayer
      *
      * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/Servicii_web/doc_WS_V9.txt
      */
-    public function vatStatus(int $cif, ?string $date): array|object
+    public function vatStatus(int $cif, ?string $date = null): array|object
     {
         $date ??= now()->format('Y-m-d');
 
