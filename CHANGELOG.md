@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-anaf` will be documented in this file.
 
+## v0.3.0 - 2025-10-21
+
+### What's Changed
+
+* Feat/extend by @pristavu in https://github.com/pristavu/laravel-anaf/pull/4
+
+**Full Changelog**: https://github.com/pristavu/laravel-anaf/compare/v0.2.0...v0.3.0
+
 ## v0.2.0 - 2025-10-17
 
 ### What's Changed
