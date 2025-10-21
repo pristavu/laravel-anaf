@@ -48,6 +48,28 @@ php artisan vendor:publish --tag="anaf-config"
 
 ---
 
+
+## Usage
+
+You can use the package via the Anaf facade:
+
+```php
+use Pristavu\Anaf\Facades\Anaf;
+
+Anaf::oauth(...);
+Anaf::eFactura(...);
+Anaf::taxPayer(...);
+```
+or via helper function:
+
+```php
+use function Pristavu\Anaf\anaf;
+
+anaf()->oauth(...);
+anaf()->eFactura(...);
+anaf()->taxPayer(...);
+```
+---
 ## OAuth2 usage
 
 Add the following to your `.env` file:

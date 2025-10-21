@@ -50,7 +50,10 @@
         "psr-4": {
             "Pristavu\\Anaf\\": "src/",
             "Pristavu\\Anaf\\Database\\Factories\\": "database/factories/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
