@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-test('cif validation works as expected', function ($cif, $expected): void {
+test('cif validation works as expected', function (int|string $cif, $expected): void {
 
     $result = Pristavu\Anaf\Support\Validate::cif($cif);
     $this->assertSame($expected, $result);

@@ -34,8 +34,10 @@ final class OAuthConnector extends Connector
             ->setClientSecret($this->clientSecret)
             ->setDefaultScopes([])
             ->setRedirectUri($this->redirectUri)
-            ->setAuthorizeEndpoint($this->resolveBaseUrl().'/authorize')
-            ->setTokenEndpoint($this->resolveBaseUrl().'/token')
+            // Relative to the connector base URL — Saloon v4 rejects
+            // absolute endpoint URLs (SSRF hardening, CVE-2026-33182).
+            ->setAuthorizeEndpoint('authorize')
+            ->setTokenEndpoint('token')
             ->setRequestModifier(function (Request $request): void {
                 if ($request instanceof GetAccessTokenRequest) {
                     $request->body()->add('token_content_type', 'jwt');
