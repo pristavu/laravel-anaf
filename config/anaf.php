@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 return [
     'request_timeout' => env('ANAF_REQUEST_TIMEOUT', 15), // in seconds
+    // Optional HTTP(S) proxy for requests to ANAF public web services,
+    // e.g. to route them through a static egress IP.
+    'proxy' => env('ANAF_PROXY'),
     // OAuth2 settings
     'oauth' => [
         'client_id' => env('ANAF_CLIENT_ID'),

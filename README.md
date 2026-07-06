@@ -435,6 +435,26 @@ $connector = Pristavu\Anaf\Facades\Anaf::taxPayer();
 $vatStatus = $connector->vatStatus(cif: 123456, date: '2023-12-31');
 ```
 
+### Checking VAT status in batch
+
+Up to 100 CIFs per request (ANAF's documented limit, alongside 1 request/second):
+
+```php
+$statuses = $connector->vatStatuses(cifs: [123456, 654321], date: '2023-12-31');
+
+// $statuses['found']     — one entry per known CIF, verbatim from ANAF
+// $statuses['not_found'] — CIFs unknown to ANAF
+```
+
+### Routing through a proxy
+
+Requests to the public web services can be routed through an HTTP(S) proxy
+(e.g. a static egress IP) by setting `ANAF_PROXY` in your `.env`:
+
+```
+ANAF_PROXY=http://user:pass@proxy.example.com:8080
+```
+
 ### Retrieving balance sheet
 
 ```php

@@ -43,8 +43,10 @@ final class TaxPayerConnector extends Connector
 
     protected function defaultConfig(): array
     {
-        return [
+        return array_filter([
             'timeout' => $this->timeoutInSeconds,
-        ];
+            // Optional egress proxy for the public web services (ANAF_PROXY).
+            'proxy' => config('anaf.proxy'),
+        ], fn (mixed $value): bool => $value !== null && $value !== '');
     }
 }

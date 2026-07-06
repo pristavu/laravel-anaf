@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Pristavu\Anaf\Concerns;
 
 use Pristavu\Anaf\Requests\TaxPayer\BalanceSheetRequest;
+use Pristavu\Anaf\Requests\TaxPayer\VatStatusBatchRequest;
 use Pristavu\Anaf\Requests\TaxPayer\VatStatusRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -29,6 +30,27 @@ trait SupportTaxPayer
         $date ??= now()->format('Y-m-d');
 
         $request = new VatStatusRequest(cif: $cif, date: $date);
+
+        return $this->send($request)->dtoOrFail();
+    }
+
+    /**
+     * Get the VAT status for a batch of up to 100 Fiscal Identification Codes
+     * in a single request. Returns the raw found/not_found sets.
+     *
+     * @param  list<int>  $cifs
+     * @param  string|null  $date  The date for which to retrieve the information in 'Y-m-d' format. Defaults to today's date if null.
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     *
+     * @see https://static.anaf.ro/static/10/Anaf/Informatii_R/Servicii_web/doc_WS_V9.txt
+     */
+    public function vatStatuses(array $cifs, ?string $date = null): array|object
+    {
+        $date ??= now()->format('Y-m-d');
+
+        $request = new VatStatusBatchRequest(cifs: $cifs, date: $date);
 
         return $this->send($request)->dtoOrFail();
     }
