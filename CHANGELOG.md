@@ -2,6 +2,14 @@
 
 All notable changes to `laravel-anaf` will be documented in this file.
 
+## v0.4.0 - 2026-07-06
+
+### What's Changed
+
+* Laravel 13 support, batch VAT status lookup and ANAF_PROXY by @pristavu in https://github.com/pristavu/laravel-anaf/pull/7
+
+**Full Changelog**: https://github.com/pristavu/laravel-anaf/compare/v0.3.0...v0.4.0
+
 ## v0.3.0 - 2025-10-21
 
 ### What's Changed
