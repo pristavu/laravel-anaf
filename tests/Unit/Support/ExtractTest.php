@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Pristavu\Anaf\Support\Extract;
 
-it('can extract files from zip archive inputs', function ($archive): void {
+it('can extract files from zip archive inputs', function (string $archive): void {
 
     $extract = Extract::from($archive);
 
@@ -19,7 +19,7 @@ it('can extract files from zip archive inputs', function ($archive): void {
     'base64' => base64_encode(file_get_contents(__DIR__.'/../../Fixtures/Efactura/123456789.zip')),
 ]);
 
-it('throws exception for invalid zip archive', function ($archive): void {
+it('throws exception for invalid zip archive', function (string $archive): void {
     Extract::from($archive);
 })->with([
     'not-valid-zip' => 'not-a-valid-zip-archive',

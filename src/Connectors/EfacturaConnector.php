@@ -56,8 +56,6 @@ final class EfacturaConnector extends Connector
     /**
      * Enable test mode for the connector.
      * This will switch the base URL to the test environment.
-     *
-     * @return $this
      */
     public function inTestMode(): self
     {

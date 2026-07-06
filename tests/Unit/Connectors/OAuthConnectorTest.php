@@ -23,9 +23,9 @@ it(description: 'returns the getAuthorizationUrl', closure: function (): void {
 
 test(description: 'client_id, client_secret and redirect_uri must be provided either as parameters or in the configuration', closure: function (): void {
 
-    config()->set('oauth.anaf.client_id', null);
-    config()->set('oauth.anaf.client_secret', null);
-    config()->set('oauth.anaf.redirect_uri', null);
+    config()->set('oauth.anaf.client_id');
+    config()->set('oauth.anaf.client_secret');
+    config()->set('oauth.anaf.redirect_uri');
 
     $connector = Anaf::oauth();
 
