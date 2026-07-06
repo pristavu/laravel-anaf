@@ -38,7 +38,7 @@ trait SupportTaxPayer
      * Get the VAT status for a batch of up to 100 Fiscal Identification Codes
      * in a single request. Returns the raw found/not_found sets.
      *
-     * @param  list<int>  $cifs
+     * @param  list<int|string>  $cifs  Accepts the same shapes as Validate::cif (e.g. "RO29930516").
      * @param  string|null  $date  The date for which to retrieve the information in 'Y-m-d' format. Defaults to today's date if null.
      *
      * @throws FatalRequestException

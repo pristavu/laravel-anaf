@@ -43,8 +43,8 @@ class VatStatusRequest extends Request implements HasBody
     {
         return new AnafException(
             response: $response,
-            message: $response->json('message') ?? $response->json('error') ?? 'Unknown error',
-            code: $response->json('status') ?? $senderException?->getCode() ?? 0,
+            message: $response->json('message') ?? $response->json('error') ?? $response->json('eroare') ?? 'Unknown error',
+            code: $response->json('status') ?? $response->json('cod') ?? $senderException?->getCode() ?? 0,
         );
     }
 

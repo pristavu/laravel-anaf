@@ -30,25 +30,38 @@ class VatStatusBatchRequest extends Request implements HasBody
     protected Method $method = Method::POST;
 
     /**
-     * @param  list<int>  $cifs
+     * The validated CIFs, normalized to bare integers.
+     *
+     * @var list<int>
+     */
+    private readonly array $cifs;
+
+    /**
+     * @param  list<int|string>  $cifs  Accepts the same shapes as Validate::cif (e.g. "RO29930516").
      */
     public function __construct(
-        private readonly array $cifs,
+        array $cifs,
         private readonly ?string $date,
     ) {
-        if ($this->cifs === []) {
+        if ($cifs === []) {
             throw new InvalidArgumentException('A batch must contain at least one CIF.');
         }
 
-        if (count($this->cifs) > self::MAX_CIFS) {
+        if (count($cifs) > self::MAX_CIFS) {
             throw new InvalidArgumentException('A batch can contain at most 100 CIFs.');
         }
 
-        foreach ($this->cifs as $cif) {
+        $normalized = [];
+
+        foreach ($cifs as $cif) {
             if (! Validate::cif($cif)) {
                 throw new InvalidArgumentException('The provided CIF is invalid.');
             }
+
+            $normalized[] = (int) preg_replace('/\D/', '', (string) $cif);
         }
+
+        $this->cifs = $normalized;
     }
 
     public function resolveEndpoint(): string
@@ -60,8 +73,8 @@ class VatStatusBatchRequest extends Request implements HasBody
     {
         return new AnafException(
             response: $response,
-            message: $response->json('message') ?? $response->json('error') ?? 'Unknown error',
-            code: $response->json('status') ?? $senderException?->getCode() ?? 0,
+            message: $response->json('message') ?? $response->json('error') ?? $response->json('eroare') ?? 'Unknown error',
+            code: $response->json('status') ?? $response->json('cod') ?? $senderException?->getCode() ?? 0,
         );
     }
 
